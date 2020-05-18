@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
+import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
+import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.common.AbstractHalServiceRequestContext;
 import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchResultPageResource;
+import com.github.feffef.reactivehalspringexample.services.metasearch.services.MetaSearchResultMerger;
 
+import io.reactivex.rxjava3.core.Flowable;
 import io.wcm.caravan.hal.microservices.api.HalApiFacade;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
 import reactor.core.publisher.Mono;
@@ -29,6 +33,9 @@ public class MetaSearchController {
 
 	@Autowired
 	private HalApiSupport halSupport;
+
+	@Autowired
+	private MetaSearchResultMerger merger;
 
 	@GetMapping()
 	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
@@ -59,6 +66,12 @@ public class MetaSearchController {
 		@Override
 		public SearchEntryPointResource getGoogleSearchEntryPoint() {
 			return getEntryPoint("http://localhost:8080/search/google", SearchEntryPointResource.class);
+		}
+
+		@Override
+		public Flowable<SearchResult> getAllGoogleResults(String query, SearchOptions options) {
+
+			return getGoogleSearchEntryPoint().executeSearch(query, options).flatMapPublisher(merger::getAllResults);
 		}
 	}
 }

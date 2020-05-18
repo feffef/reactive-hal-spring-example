@@ -14,7 +14,7 @@ import io.wcm.caravan.hal.resource.Link;
 
 public class GoogleSearchResultPageResource implements SearchResultPageResource, LinkableResource {
 
-	private final static int RESULTS_PER_PAGE = 10;
+	private final static int RESULTS_PER_PAGE = 25;
 
 	private final GoogleSearchRequestContext request;
 
