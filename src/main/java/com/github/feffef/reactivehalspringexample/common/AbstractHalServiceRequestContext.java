@@ -11,7 +11,7 @@ import io.wcm.caravan.hal.microservices.api.HalApiFacade;
 import io.wcm.caravan.hal.resource.Link;
 import reactor.core.publisher.Mono;
 
-public abstract class AbstractHalServiceRequestContext<ControllerClass> {
+public abstract class AbstractHalServiceRequestContext implements HalServiceRequestContext {
 
 	private final HalApiFacade halApi;
 
@@ -19,21 +19,20 @@ public abstract class AbstractHalServiceRequestContext<ControllerClass> {
 		this.halApi = halApi;
 	}
 
-	protected abstract Class<? extends ControllerClass> getControllerClass();
-
 	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
 		return halApi.getEntryPoint(uri, halApiInterface);
 	}
 
+	@Override
 	public void limitOutputMaxAge(int seconds) {
 		halApi.limitOutputMaxAge(seconds);
 	}
 
-	public Link createLinkTo(Function<ControllerClass, Mono<ResponseEntity<JsonNode>>> controllerCall) {
+	@Override
+	public <T> Link createLinkTo(Class<? extends T> controllerClass,
+			Function<T, Mono<ResponseEntity<JsonNode>>> controllerCall) {
 
-		Class<? extends ControllerClass> controllerClass = getControllerClass();
-
-		ControllerClass controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
+		T controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
 
 		Mono<ResponseEntity<JsonNode>> invocationResult = controllerCall.apply(controllerDummy);
 

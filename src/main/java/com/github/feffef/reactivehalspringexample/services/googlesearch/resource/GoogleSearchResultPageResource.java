@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.context.GoogleSearchRequestContext;
+import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
 
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
@@ -19,7 +20,6 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 
 	private final String query;
 	private final Integer delayMs;
-
 	private final Integer startIndex;
 
 	public GoogleSearchResultPageResource(GoogleSearchRequestContext request, String query, Integer delayMs,
@@ -72,7 +72,6 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
+		return request.createLinkTo(GoogleSearchController.class, ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
 	}
-
 }

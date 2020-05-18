@@ -4,6 +4,7 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.context.GoogleSearchRequestContext;
+import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
 
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
@@ -25,7 +26,7 @@ public class GoogleSearchEntryPointResource implements SearchEntryPointResource,
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getEntryPoint());
+		return request.createLinkTo(GoogleSearchController.class, ctrl -> ctrl.getEntryPoint());
 	}
 
 }

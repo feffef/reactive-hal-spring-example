@@ -53,8 +53,7 @@ public class GoogleSearchController {
 		return halSupport.processRequest(RequestContext::new, resourceConstructor);
 	}
 
-	class RequestContext extends AbstractHalServiceRequestContext<GoogleSearchController>
-			implements GoogleSearchRequestContext {
+	class RequestContext extends AbstractHalServiceRequestContext implements GoogleSearchRequestContext {
 
 		RequestContext(HalApiFacade halApi) {
 			super(halApi);
@@ -65,9 +64,5 @@ public class GoogleSearchController {
 			return searchService;
 		}
 
-		@Override
-		protected Class<? extends GoogleSearchController> getControllerClass() {
-			return GoogleSearchController.this.getClass();
-		}
 	}
 }
