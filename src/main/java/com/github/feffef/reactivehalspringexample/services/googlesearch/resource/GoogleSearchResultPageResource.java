@@ -72,6 +72,7 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(GoogleSearchController.class, ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
+		return request.createLinkTo(GoogleSearchController.class,
+				ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
 	}
 }
