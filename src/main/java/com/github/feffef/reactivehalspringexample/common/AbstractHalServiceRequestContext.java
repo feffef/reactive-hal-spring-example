@@ -38,6 +38,11 @@ public abstract class AbstractHalServiceRequestContext implements HalServiceRequ
 
 		String url = WebMvcLinkBuilder.linkTo(invocationResult).toString();
 
+		// FIXME: properly get the base path from the request
+		if (!url.startsWith("http")) {
+			url = "http://localhost:8080" + url;
+		}
+
 		return new Link(url);
 	}
 }
