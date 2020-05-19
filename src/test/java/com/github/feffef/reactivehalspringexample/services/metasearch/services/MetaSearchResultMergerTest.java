@@ -243,4 +243,26 @@ public class MetaSearchResultMergerTest {
 		subscriber.assertComplete();
 	}
 
+	@Test
+	public void paged_results_should_respect_limit_operator() throws Exception {
+
+		AsyncResultMock arm = new AsyncResultMock();
+
+		MetaSearchResultMerger merger = new MetaSearchResultMerger();
+		Flowable<SearchResult> allResults = merger.getAllResults(arm.getFirstPage());
+
+		Flowable<SearchResult> limitedResults = allResults.take(5);
+
+		assertThat(arm.getNumSubjects()).isEqualTo(1);
+		assertThat(arm.getSubject(0).hasObservers()).isEqualTo(false);
+
+		TestSubscriber<SearchResult> subscriber = limitedResults.test();
+		subscriber.assertNoValues();
+		assertThat(arm.getNumSubjects()).isEqualTo(1);
+		assertThat(arm.getSubject(0).hasObservers()).isEqualTo(true);
+
+		arm.emitNextPage(10);
+
+		assertThat(arm.getNumSubjects()).isEqualTo(1);
+	}
 }
