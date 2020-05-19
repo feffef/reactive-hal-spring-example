@@ -7,6 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ReactiveHalSpringExampleApplication {
 
 	public static void main(String[] args) {
+
+		// FIXME: set these externally with configuration
+		System.setProperty("server.tomcat.max-threads", "5");
+
 		SpringApplication.run(ReactiveHalSpringExampleApplication.class, args);
 	}
 

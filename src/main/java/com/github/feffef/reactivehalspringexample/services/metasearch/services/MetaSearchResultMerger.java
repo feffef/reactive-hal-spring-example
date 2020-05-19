@@ -43,7 +43,7 @@ public class MetaSearchResultMerger {
 		@Override
 		public void subscribe(@NonNull FlowableEmitter<@NonNull SearchResult> emitter) throws Throwable {
 
-			log.debug("new subscription to paging flowable requesting " + emitter.requested() + " items");
+			log.debug("new subscription to paging flowable requesting {} items", emitter.requested());
 
 			emitResultsFromPageRecursively(firstPage, emitter);
 		}
@@ -53,8 +53,7 @@ public class MetaSearchResultMerger {
 
 			Single<List<SearchResult>> resultsOnPage = currentPage.getResults().map(SearchResultResource::getProperties)
 					.toList();
-
-			log.debug("retrieving items on page " + pageCount.incrementAndGet());
+			log.debug("retrieving items on page {}", pageCount.incrementAndGet());
 
 			resultsOnPage.subscribe(new SingleObserver<List<SearchResult>>() {
 
@@ -65,7 +64,7 @@ public class MetaSearchResultMerger {
 				@Override
 				public void onSuccess(@NonNull List<SearchResult> newResults) {
 
-					log.debug(newResults.size() + " items have been retrieved");
+					log.debug("{} items have been retrieved", newResults.size());
 
 					newResults.forEach(emitter::onNext);
 
@@ -75,8 +74,7 @@ public class MetaSearchResultMerger {
 					}
 
 					if (emitter.requested() > 0) {
-						log.debug("have to fetch next page, because " + emitter.requested()
-								+ " more items are requested");
+						log.debug("have to fetch next page, because {} more items are requested", emitter.requested());
 						getNextPage(currentPage, emitter);
 					} else {
 						log.debug("not fetching more pages because no more items are requested");

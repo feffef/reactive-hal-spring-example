@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.UnsupportedMediaTypeException;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,18 +20,27 @@ import io.wcm.caravan.hal.microservices.api.client.HalApiClientException;
 import io.wcm.caravan.hal.microservices.api.client.JsonResourceLoader;
 import io.wcm.caravan.hal.microservices.api.common.HalResponse;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 @Component
 public class WebClientJsonResourceLoader implements JsonResourceLoader {
 
 	private static final Logger log = LoggerFactory.getLogger(WebClientJsonResourceLoader.class);
 
+	private final ConnectionProvider connectionProvider = ConnectionProvider
+			.builder(WebClientJsonResourceLoader.class.getSimpleName()).maxConnections(5000).build();
+
 	@Override
 	public Single<HalResponse> loadJsonResource(String uri) {
 
-		log.info("Fetching resource from " + uri);
+		if (log.isDebugEnabled()) {
+			log.debug("Fetching resource from " + uri);
+		}
 
-		WebClient client = WebClient.create();
+		HttpClient httpClient = HttpClient.create(connectionProvider);
+
+		WebClient client = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
 
 		ResponseSpec response = client.get().uri(URI.create(uri)).retrieve();
 
