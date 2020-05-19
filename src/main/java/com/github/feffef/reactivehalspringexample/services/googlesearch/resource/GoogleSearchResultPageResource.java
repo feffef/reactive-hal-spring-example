@@ -67,7 +67,7 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 	}
 
 	private int getTotalNumResults() {
-		return query.hashCode() % 100;
+		return Math.abs(query.hashCode()) % 100;
 	}
 
 	@Override
