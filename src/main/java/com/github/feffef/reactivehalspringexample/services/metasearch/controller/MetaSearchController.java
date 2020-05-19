@@ -63,8 +63,7 @@ public class MetaSearchController {
 			super(halApi);
 		}
 
-		@Override
-		public SearchEntryPointResource getGoogleSearchEntryPoint() {
+		private SearchEntryPointResource getGoogleSearchEntryPoint() {
 			return getEntryPoint("http://localhost:8080/search/google", SearchEntryPointResource.class);
 		}
 
