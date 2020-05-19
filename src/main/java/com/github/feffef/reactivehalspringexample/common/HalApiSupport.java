@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,8 @@ public class HalApiSupport {
 
 	private final JsonResourceLoader jsonLoader;
 
-	public HalApiSupport(@Autowired HttpServletRequest httpRequest, @Autowired JsonResourceLoader jsonLoader) {
+	public HalApiSupport(@Autowired HttpServletRequest httpRequest,
+			@Autowired @Qualifier("cachingJsonResourceLoader") JsonResourceLoader jsonLoader) {
 
 		this.requestUri = getRequestURI(httpRequest);
 

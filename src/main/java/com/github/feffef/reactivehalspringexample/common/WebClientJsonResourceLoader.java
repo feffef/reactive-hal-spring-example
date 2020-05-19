@@ -2,6 +2,8 @@ package com.github.feffef.reactivehalspringexample.common;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -21,8 +23,12 @@ import reactor.core.publisher.Mono;
 @Component
 public class WebClientJsonResourceLoader implements JsonResourceLoader {
 
+	private static final Logger log = LoggerFactory.getLogger(WebClientJsonResourceLoader.class);
+
 	@Override
 	public Single<HalResponse> loadJsonResource(String uri) {
+
+		log.info("Fetching resource from " + uri);
 
 		WebClient client = WebClient.create();
 
