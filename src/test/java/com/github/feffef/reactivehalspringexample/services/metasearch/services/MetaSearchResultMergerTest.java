@@ -12,7 +12,6 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.google.common.collect.Iterables;
 
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;

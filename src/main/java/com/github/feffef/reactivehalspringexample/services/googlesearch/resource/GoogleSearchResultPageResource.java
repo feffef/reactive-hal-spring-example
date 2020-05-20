@@ -6,9 +6,11 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.context.GoogleSearchRequestContext;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
+import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchService;
 
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
 
@@ -22,33 +24,35 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 	private final Integer delayMs;
 	private final Integer startIndex;
 
+	private Single<GoogleSearchService.GoogleSearchResult> pageResult;
+
 	public GoogleSearchResultPageResource(GoogleSearchRequestContext request, String query, Integer delayMs,
 			Integer startIndex) {
 		this.request = request;
 		this.query = query;
 		this.delayMs = delayMs;
 		this.startIndex = startIndex;
+
+		this.pageResult = request.getSearchService().getResults(query, startIndex, RESULTS_PER_PAGE).cache();
 	}
 
 	@Override
 	public Observable<SearchResultResource> getResults() {
 
-		int numRemainingResults = Math.min(RESULTS_PER_PAGE, getTotalNumResults() - startIndex);
-
-		return request.getSearchService().getResults(query, startIndex, numRemainingResults)
+		return pageResult.flatMapObservable(r -> Observable.fromIterable(r.getResultsOnPage()))
 				.delay(delayMs, TimeUnit.MILLISECONDS, false).map(GoogleSearchResultResource::new);
 	}
 
 	@Override
 	public Maybe<SearchResultPageResource> getNextPage() {
 
-		int totalResults = getTotalNumResults();
-		int nextIndex = startIndex + RESULTS_PER_PAGE;
-		if (totalResults > nextIndex) {
-			return linkToPage(nextIndex);
-		}
-
-		return Maybe.empty();
+		return pageResult.flatMapMaybe(r -> {
+			int nextIndex = startIndex + RESULTS_PER_PAGE;
+			if (r.getTotalNumResults() > nextIndex) {
+				return linkToPage(nextIndex);
+			}
+			return Maybe.empty();
+		});
 	}
 
 	@Override
@@ -64,10 +68,6 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 
 	private Maybe<SearchResultPageResource> linkToPage(int fromIndex) {
 		return Maybe.just(new GoogleSearchResultPageResource(request, query, delayMs, fromIndex));
-	}
-
-	private int getTotalNumResults() {
-		return Math.abs(query.hashCode()) % 100;
 	}
 
 	@Override

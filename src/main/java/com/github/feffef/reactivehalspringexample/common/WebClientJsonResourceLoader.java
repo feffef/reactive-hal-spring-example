@@ -45,12 +45,13 @@ public class WebClientJsonResourceLoader implements JsonResourceLoader {
 		ResponseSpec response = client.get().uri(URI.create(uri)).retrieve();
 
 		Mono<HalResponse> halResponse = response.toEntity(JsonNode.class).onErrorMap(ex -> remapException(ex, uri))
-				.map(this::toHalResponse);
+				.map(WebClientJsonResourceLoader::toHalResponse);
 
 		return Single.fromCompletionStage(halResponse.toFuture());
 	}
 
-	private HalResponse toHalResponse(ResponseEntity<JsonNode> responseEntity) {
+	// FIXME: move to util class
+	public static HalResponse toHalResponse(ResponseEntity<JsonNode> responseEntity) {
 
 		HalResponse response = new HalResponse().withStatus(responseEntity.getStatusCodeValue());
 
