@@ -1,5 +1,6 @@
 package com.github.feffef.reactivehalspringexample.common;
 
+import java.time.Duration;
 import java.util.function.Function;
 
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -7,25 +8,25 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.wcm.caravan.hal.microservices.api.HalApiFacade;
+import io.wcm.caravan.hal.microservices.api.Reha;
 import io.wcm.caravan.hal.resource.Link;
 import reactor.core.publisher.Mono;
 
 public abstract class AbstractHalServiceRequestContext implements HalServiceRequestContext {
 
-	private final HalApiFacade halApi;
+	private final Reha reha;
 
-	public AbstractHalServiceRequestContext(HalApiFacade halApi) {
-		this.halApi = halApi;
+	public AbstractHalServiceRequestContext(Reha reha) {
+		this.reha = reha;
 	}
 
 	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
-		return halApi.getEntryPoint(uri, halApiInterface);
+		return reha.getEntryPoint(uri, halApiInterface);
 	}
 
 	@Override
-	public void limitOutputMaxAge(int seconds) {
-		halApi.limitOutputMaxAge(seconds);
+	public void setResponseMaxAge(Duration duration) {
+		reha.setResponseMaxAge(duration);
 	}
 
 	@Override

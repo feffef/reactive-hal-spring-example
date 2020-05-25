@@ -20,7 +20,7 @@ import com.github.feffef.reactivehalspringexample.services.concurrentperformance
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.resource.ConcurrentPerformanceResultResource;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.wcm.caravan.hal.microservices.api.HalApiFacade;
+import io.wcm.caravan.hal.microservices.api.Reha;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
 import reactor.core.publisher.Mono;
 
@@ -54,8 +54,8 @@ public class ConcurrentPerformanceController {
 
 		private final MetaSearchClient metaSearchClient;
 
-		RequestContext(HalApiFacade halApi) {
-			super(halApi);
+		RequestContext(Reha reha) {
+			super(reha);
 
 			metaSearchClient = new MetaSearchClient(
 					getEntryPoint("http://localhost:8080/search/meta", SearchEntryPointResource.class));

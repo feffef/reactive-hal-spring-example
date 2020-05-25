@@ -1,5 +1,6 @@
 package com.github.feffef.reactivehalspringexample.common;
 
+import java.time.Duration;
 import java.util.function.Function;
 
 import org.springframework.http.ResponseEntity;
@@ -14,5 +15,5 @@ public interface HalServiceRequestContext {
 	<T> Link createLinkTo(Class<? extends T> controllerClass,
 			Function<T, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
-	void limitOutputMaxAge(int seconds);
+	void setResponseMaxAge(Duration duration);
 }

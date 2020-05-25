@@ -23,7 +23,7 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.resource.M
 import com.github.feffef.reactivehalspringexample.services.metasearch.services.MetaSearchResultMerger;
 
 import io.reactivex.rxjava3.core.Flowable;
-import io.wcm.caravan.hal.microservices.api.HalApiFacade;
+import io.wcm.caravan.hal.microservices.api.Reha;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
 import reactor.core.publisher.Mono;
 
@@ -59,8 +59,8 @@ public class MetaSearchController {
 
 	class RequestContext extends AbstractHalServiceRequestContext implements MetaSearchRequestContext {
 
-		RequestContext(HalApiFacade halApi) {
-			super(halApi);
+		RequestContext(Reha reha) {
+			super(reha);
 		}
 
 		private SearchEntryPointResource getGoogleSearchEntryPoint() {

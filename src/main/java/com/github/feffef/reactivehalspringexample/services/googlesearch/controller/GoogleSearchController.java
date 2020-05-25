@@ -19,7 +19,7 @@ import com.github.feffef.reactivehalspringexample.services.googlesearch.resource
 import com.github.feffef.reactivehalspringexample.services.googlesearch.resource.GoogleSearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchService;
 
-import io.wcm.caravan.hal.microservices.api.HalApiFacade;
+import io.wcm.caravan.hal.microservices.api.Reha;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
 import reactor.core.publisher.Mono;
 
@@ -55,8 +55,8 @@ public class GoogleSearchController {
 
 	class RequestContext extends AbstractHalServiceRequestContext implements GoogleSearchRequestContext {
 
-		RequestContext(HalApiFacade halApi) {
-			super(halApi);
+		RequestContext(Reha reha) {
+			super(reha);
 		}
 
 		@Override

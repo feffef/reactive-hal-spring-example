@@ -19,7 +19,8 @@ import org.springframework.web.context.annotation.RequestScope;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.HalApiFacade;
+import io.wcm.caravan.hal.microservices.api.Reha;
+import io.wcm.caravan.hal.microservices.api.RehaBuilder;
 import io.wcm.caravan.hal.microservices.api.client.JsonResourceLoader;
 import io.wcm.caravan.hal.microservices.api.common.HalResponse;
 import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
@@ -42,16 +43,16 @@ public class HalApiSupport {
 	}
 
 	public <RequestContextType> Mono<ResponseEntity<JsonNode>> processRequest(
-			Function<HalApiFacade, RequestContextType> requestContextConstructor,
+			Function<Reha, RequestContextType> requestContextConstructor,
 			Function<RequestContextType, LinkableResource> resourceImplConstructor) {
 
-		HalApiFacade halApi = new HalApiFacade(jsonLoader);
+		Reha reha = RehaBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
 
-		RequestContextType requestContext = requestContextConstructor.apply(halApi);
+		RequestContextType requestContext = requestContextConstructor.apply(reha);
 
 		LinkableResource resourceImpl = resourceImplConstructor.apply(requestContext);
 
-		return renderResponse(halApi, resourceImpl);
+		return renderResponse(reha, resourceImpl);
 	}
 
 	private static URI getRequestURI(HttpServletRequest httpRequest) {
@@ -63,9 +64,9 @@ public class HalApiSupport {
 		}
 	}
 
-	private Mono<ResponseEntity<JsonNode>> renderResponse(HalApiFacade halApi, LinkableResource resourceImpl) {
+	private Mono<ResponseEntity<JsonNode>> renderResponse(Reha reha, LinkableResource resourceImpl) {
 
-		Single<HalResponse> response = halApi.renderResponse(requestUri.toString(), resourceImpl);
+		Single<HalResponse> response = reha.respondWith(resourceImpl);
 
 		Single<ResponseEntity<JsonNode>> entity = response.map(this::toResponseEntity);
 
