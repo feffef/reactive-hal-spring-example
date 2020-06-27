@@ -2,6 +2,7 @@ package com.github.feffef.reactivehalspringexample.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -66,11 +67,11 @@ public class HalApiSupport {
 
 	private Mono<ResponseEntity<JsonNode>> renderResponse(Reha reha, LinkableResource resourceImpl) {
 
-		Single<HalResponse> response = reha.respondWith(resourceImpl);
+		CompletionStage<HalResponse> response = reha.renderResponseAsync(resourceImpl);
 
-		Single<ResponseEntity<JsonNode>> entity = response.map(this::toResponseEntity);
+		CompletionStage<ResponseEntity<JsonNode>> entity = response.thenApply(this::toResponseEntity);
 
-		return Mono.fromCompletionStage(entity.toCompletionStage());
+		return Mono.fromCompletionStage(entity);
 	}
 
 	private ResponseEntity<JsonNode> toResponseEntity(HalResponse halResponse) {
