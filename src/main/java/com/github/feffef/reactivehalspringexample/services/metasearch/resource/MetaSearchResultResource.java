@@ -3,7 +3,7 @@ package com.github.feffef.reactivehalspringexample.services.metasearch.resource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 
-import io.wcm.caravan.hal.microservices.api.server.EmbeddableResource;
+import io.wcm.caravan.reha.api.resources.EmbeddableResource;
 
 class MetaSearchResultResource implements SearchResultResource, EmbeddableResource {
 

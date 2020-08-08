@@ -11,7 +11,7 @@ import com.github.feffef.reactivehalspringexample.services.googlesearch.services
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
 
 public class GoogleSearchResultPageResource implements SearchResultPageResource, LinkableResource {

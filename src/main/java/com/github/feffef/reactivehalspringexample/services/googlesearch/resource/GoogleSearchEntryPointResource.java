@@ -7,7 +7,7 @@ import com.github.feffef.reactivehalspringexample.services.googlesearch.context.
 import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
 
 public class GoogleSearchEntryPointResource implements SearchEntryPointResource, LinkableResource {

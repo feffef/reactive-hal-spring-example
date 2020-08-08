@@ -10,7 +10,7 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.controller
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
-import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
 
 public class MetaSearchResultPageResource implements SearchResultPageResource, LinkableResource {

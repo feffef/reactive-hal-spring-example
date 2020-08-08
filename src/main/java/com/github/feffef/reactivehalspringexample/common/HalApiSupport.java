@@ -24,7 +24,7 @@ import io.wcm.caravan.hal.microservices.api.Reha;
 import io.wcm.caravan.hal.microservices.api.RehaBuilder;
 import io.wcm.caravan.hal.microservices.api.client.JsonResourceLoader;
 import io.wcm.caravan.hal.microservices.api.common.HalResponse;
-import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 
 @Component

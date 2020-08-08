@@ -6,7 +6,7 @@ import com.github.feffef.reactivehalspringexample.services.concurrentperformance
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.controller.ConcurrentPerformanceController;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
 
 public class ConcurrentPerformanceEntryPointResource implements PerformanceEntryPointResource, LinkableResource {

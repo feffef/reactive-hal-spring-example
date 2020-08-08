@@ -17,7 +17,7 @@ import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.server.LinkableResource;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
 
 public class ConcurrentPerformanceResultResource implements PerformanceResultResource, LinkableResource {
