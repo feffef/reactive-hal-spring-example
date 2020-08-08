@@ -20,7 +20,7 @@ import com.github.feffef.reactivehalspringexample.services.concurrentperformance
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.resource.ConcurrentPerformanceResultResource;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.wcm.caravan.hal.microservices.api.Reha;
+import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 

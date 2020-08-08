@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.wcm.caravan.hal.microservices.api.Reha;
+import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.hal.resource.Link;
 import reactor.core.publisher.Mono;
 

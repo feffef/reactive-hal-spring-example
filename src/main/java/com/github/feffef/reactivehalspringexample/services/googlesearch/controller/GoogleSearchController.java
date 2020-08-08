@@ -19,7 +19,7 @@ import com.github.feffef.reactivehalspringexample.services.googlesearch.resource
 import com.github.feffef.reactivehalspringexample.services.googlesearch.resource.GoogleSearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchService;
 
-import io.wcm.caravan.hal.microservices.api.Reha;
+import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 

@@ -5,8 +5,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.client.JsonResourceLoader;
-import io.wcm.caravan.hal.microservices.api.common.HalResponse;
+import io.wcm.caravan.reha.api.client.JsonResourceLoader;
+import io.wcm.caravan.reha.api.common.HalResponse;
 
 @Component
 public class CachingJsonResourceLoader implements JsonResourceLoader {

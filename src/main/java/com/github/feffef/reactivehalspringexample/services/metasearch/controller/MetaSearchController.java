@@ -23,7 +23,7 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.resource.M
 import com.github.feffef.reactivehalspringexample.services.metasearch.services.MetaSearchResultMerger;
 
 import io.reactivex.rxjava3.core.Flowable;
-import io.wcm.caravan.hal.microservices.api.Reha;
+import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 

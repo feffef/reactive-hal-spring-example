@@ -23,8 +23,8 @@ import com.github.feffef.reactivehalspringexample.services.googlesearch.services
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.client.HalApiClient;
-import io.wcm.caravan.hal.microservices.api.common.RequestMetricsCollector;
+import io.wcm.caravan.reha.api.client.HalApiClient;
+import io.wcm.caravan.reha.api.common.RequestMetricsCollector;
 
 @SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
 public class GoogleSearchIntegrationTest {

@@ -20,10 +20,10 @@ import org.springframework.web.context.annotation.RequestScope;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.hal.microservices.api.Reha;
-import io.wcm.caravan.hal.microservices.api.RehaBuilder;
-import io.wcm.caravan.hal.microservices.api.client.JsonResourceLoader;
-import io.wcm.caravan.hal.microservices.api.common.HalResponse;
+import io.wcm.caravan.reha.api.Reha;
+import io.wcm.caravan.reha.api.RehaBuilder;
+import io.wcm.caravan.reha.api.client.JsonResourceLoader;
+import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 
