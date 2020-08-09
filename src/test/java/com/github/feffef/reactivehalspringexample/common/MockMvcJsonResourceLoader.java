@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.client.HalApiClientException;
+import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
 import io.wcm.caravan.reha.api.client.JsonResourceLoader;
 import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.hal.resource.HalResource;

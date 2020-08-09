@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.client.HalApiDeveloperException;
+import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
 
 @Service
 public class GoogleSearchService {
