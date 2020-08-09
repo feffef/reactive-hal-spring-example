@@ -5,7 +5,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.client.JsonResourceLoader;
+import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
 import io.wcm.caravan.reha.api.common.HalResponse;
 
 @Component
