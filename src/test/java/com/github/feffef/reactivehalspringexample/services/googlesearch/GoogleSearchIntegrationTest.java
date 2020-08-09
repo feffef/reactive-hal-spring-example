@@ -8,18 +8,14 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.github.feffef.reactivehalspringexample.ReactiveHalSpringExampleApplication;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.common.MockMvcJsonResourceLoader;
-import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchService;
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Single;
@@ -27,7 +23,10 @@ import io.wcm.caravan.reha.api.client.HalApiClient;
 import io.wcm.caravan.reha.api.common.RequestMetricsCollector;
 
 @SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
+@ActiveProfiles(GoogleSearchIntegrationTest.PROFILE)
 public class GoogleSearchIntegrationTest {
+
+	static final String PROFILE = "google-search-integration-test";
 
 	private static final String QUERY = "foo";
 
@@ -38,20 +37,7 @@ public class GoogleSearchIntegrationTest {
 
 	@Autowired
 	MockGoogleSearchService googleSearchService;
-
-	@Configuration
-	@Import(ReactiveHalSpringExampleApplication.class) // the actual configuration
-	public static class TestConfig {
-
-		@Autowired
-		MockGoogleSearchService googleSearchService;
-
-		@Bean
-		public GoogleSearchService googleSearchService() {
-			return googleSearchService;
-		}
-	}
-
+	
 	private SearchEntryPointResource getEntryPoint() {
 
 		HalApiClient apiClient = HalApiClient.create(resourceLoader, RequestMetricsCollector.create());
