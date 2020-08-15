@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.services.googlesearch;
+package com.github.feffef.reactivehalspringexample.services.examplesearch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchService;
+import com.github.feffef.reactivehalspringexample.services.examplesearch.services.ExampleSearchResultProvider;
 
 @Component
-@Primary // this service should *replace* the real GoogleSearchService...
-@Profile(GoogleSearchIntegrationTest.PROFILE) //... in integration tests only
-public class MockGoogleSearchService extends GoogleSearchService {
+@Primary // this service should *replace* the ExampleSearchResultProvider
+@Profile(ExampleSearchIntegrationTest.PROFILE) // ... in integration tests only
+public class MockExampleSearchResultProvider extends ExampleSearchResultProvider {
 
 	private final Map<String, Integer> numResultsMap = new HashMap<>();
 

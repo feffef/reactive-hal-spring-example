@@ -12,13 +12,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import com.github.feffef.reactivehalspringexample.api.performance.PerformanceResult;
 import com.github.feffef.reactivehalspringexample.api.performance.PerformanceResultResource;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.context.ConcurrentPerformanceRequestContext;
-import com.github.feffef.reactivehalspringexample.services.concurrentperformance.controller.ConcurrentPerformanceController;
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 
 public class ConcurrentPerformanceResultResource implements PerformanceResultResource, LinkableResource {
 
@@ -144,8 +143,7 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 	@Override
 	public Link createLink() {
 
-		return request.createLinkTo(ConcurrentPerformanceController.class,
-				ctrl -> ctrl.getResult(numRequests, delayMs));
+		return request.createLinkTo(ctrl -> ctrl.getResult(numRequests, delayMs));
 	}
 
 }

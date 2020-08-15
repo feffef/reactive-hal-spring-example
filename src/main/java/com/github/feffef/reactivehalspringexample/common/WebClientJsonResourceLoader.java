@@ -16,9 +16,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.reactivex.rxjava3.core.Single;
+import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
 import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
-import io.wcm.caravan.reha.api.common.HalResponse;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
-import com.github.feffef.reactivehalspringexample.common.AbstractHalServiceRequestContext;
+import com.github.feffef.reactivehalspringexample.common.AbstractSpringRehaRequestContext;
 import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchEntryPointResource;
@@ -57,20 +57,21 @@ public class MetaSearchController {
 		return halSupport.processRequest(RequestContext::new, resourceConstructor);
 	}
 
-	class RequestContext extends AbstractHalServiceRequestContext implements MetaSearchRequestContext {
+	class RequestContext extends AbstractSpringRehaRequestContext<MetaSearchController>
+			implements MetaSearchRequestContext {
 
 		RequestContext(Reha reha) {
-			super(reha);
+			super(reha, MetaSearchController.class);
 		}
 
-		private SearchEntryPointResource getGoogleSearchEntryPoint() {
-			return getEntryPoint("http://localhost:8080/search/google", SearchEntryPointResource.class);
+		private SearchEntryPointResource getExampleSearchEntryPoint() {
+			return getEntryPoint("http://localhost:8080/search/example", SearchEntryPointResource.class);
 		}
 
 		@Override
-		public Flowable<SearchResult> getAllGoogleResults(String query, SearchOptions options) {
+		public Flowable<SearchResult> getAllExampleResults(String query, SearchOptions options) {
 
-			return getGoogleSearchEntryPoint().executeSearch(query, options).flatMapPublisher(merger::getAllResults);
+			return getExampleSearchEntryPoint().executeSearch(query, options).flatMapPublisher(merger::getAllResults);
 		}
 	}
 }

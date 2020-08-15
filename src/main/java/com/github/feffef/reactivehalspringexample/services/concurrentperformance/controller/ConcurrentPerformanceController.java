@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
-import com.github.feffef.reactivehalspringexample.common.AbstractHalServiceRequestContext;
+import com.github.feffef.reactivehalspringexample.common.AbstractSpringRehaRequestContext;
 import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.client.MetaSearchClient;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.context.ConcurrentPerformanceRequestContext;
@@ -50,12 +50,13 @@ public class ConcurrentPerformanceController {
 		return halSupport.processRequest(RequestContext::new, resourceConstructor);
 	}
 
-	class RequestContext extends AbstractHalServiceRequestContext implements ConcurrentPerformanceRequestContext {
+	class RequestContext extends AbstractSpringRehaRequestContext<ConcurrentPerformanceController>
+			implements ConcurrentPerformanceRequestContext {
 
 		private final MetaSearchClient metaSearchClient;
 
 		RequestContext(Reha reha) {
-			super(reha);
+			super(reha, ConcurrentPerformanceController.class);
 
 			metaSearchClient = new MetaSearchClient(
 					getEntryPoint("http://localhost:8080/search/meta", SearchEntryPointResource.class));

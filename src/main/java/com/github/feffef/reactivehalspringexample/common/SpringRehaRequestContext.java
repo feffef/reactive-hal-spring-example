@@ -10,10 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.wcm.caravan.hal.resource.Link;
 import reactor.core.publisher.Mono;
 
-public interface HalServiceRequestContext {
+public interface SpringRehaRequestContext<ControllerType> {
 
-	<T> Link createLinkTo(Class<? extends T> controllerClass,
-			Function<T, Mono<ResponseEntity<JsonNode>>> controllerCall);
+	Link createLinkTo(Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
 	void setResponseMaxAge(Duration duration);
+
 }

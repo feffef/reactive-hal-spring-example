@@ -1,15 +1,15 @@
-package com.github.feffef.reactivehalspringexample.services.googlesearch.resource;
+package com.github.feffef.reactivehalspringexample.services.common.resources;
 
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 
 import io.wcm.caravan.reha.api.resources.EmbeddableResource;
 
-class GoogleSearchResultResource implements SearchResultResource, EmbeddableResource {
+class SearchResultResourceImpl implements SearchResultResource, EmbeddableResource {
 
 	private final SearchResult result;
 
-	public GoogleSearchResultResource(SearchResult result) {
+	public SearchResultResourceImpl(SearchResult result) {
 		this.result = result;
 	}
 

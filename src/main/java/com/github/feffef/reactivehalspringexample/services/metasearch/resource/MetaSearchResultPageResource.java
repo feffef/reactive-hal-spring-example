@@ -5,13 +5,12 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
-import com.github.feffef.reactivehalspringexample.services.metasearch.controller.MetaSearchController;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 
 public class MetaSearchResultPageResource implements SearchResultPageResource, LinkableResource {
 
@@ -39,7 +38,7 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 		SearchOptions options = new SearchOptions();
 		options.delayMs = delayMs;
 
-		return request.getAllGoogleResults(query, options).skip(startIndex).take(RESULTS_PER_PAGE + 1);
+		return request.getAllExampleResults(query, options).skip(startIndex).take(RESULTS_PER_PAGE + 1);
 	}
 
 	@Override
@@ -75,6 +74,6 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(MetaSearchController.class, ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
+		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
 	}
 }

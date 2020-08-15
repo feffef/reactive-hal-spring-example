@@ -8,16 +8,20 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.hal.resource.Link;
+import io.wcm.caravan.reha.api.Reha;
 import reactor.core.publisher.Mono;
 
-public abstract class AbstractHalServiceRequestContext implements HalServiceRequestContext {
+public abstract class AbstractSpringRehaRequestContext<ControllerType>
+		implements SpringRehaRequestContext<ControllerType> {
 
 	private final Reha reha;
 
-	public AbstractHalServiceRequestContext(Reha reha) {
+	private final Class<? extends ControllerType> controllerClass;
+
+	public AbstractSpringRehaRequestContext(Reha reha, Class<? extends ControllerType> controllerClass) {
 		this.reha = reha;
+		this.controllerClass = controllerClass;
 	}
 
 	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
@@ -30,10 +34,9 @@ public abstract class AbstractHalServiceRequestContext implements HalServiceRequ
 	}
 
 	@Override
-	public <T> Link createLinkTo(Class<? extends T> controllerClass,
-			Function<T, Mono<ResponseEntity<JsonNode>>> controllerCall) {
+	public Link createLinkTo(Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall) {
 
-		T controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
+		ControllerType controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
 
 		Mono<ResponseEntity<JsonNode>> invocationResult = controllerCall.apply(controllerDummy);
 

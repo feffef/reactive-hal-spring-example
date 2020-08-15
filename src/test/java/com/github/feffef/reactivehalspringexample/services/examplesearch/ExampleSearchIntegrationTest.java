@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.services.googlesearch;
+package com.github.feffef.reactivehalspringexample.services.examplesearch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,21 +23,21 @@ import io.wcm.caravan.reha.api.client.HalApiClient;
 import io.wcm.caravan.reha.api.common.RequestMetricsCollector;
 
 @SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
-@ActiveProfiles(GoogleSearchIntegrationTest.PROFILE)
-public class GoogleSearchIntegrationTest {
+@ActiveProfiles(ExampleSearchIntegrationTest.PROFILE)
+public class ExampleSearchIntegrationTest {
 
-	static final String PROFILE = "google-search-integration-test";
+	static final String PROFILE = "example-search-integration-test";
 
 	private static final String QUERY = "foo";
 
-	private static final String ENTRY_POINT_URI = "/search/google";
+	private static final String ENTRY_POINT_URI = "/search/example";
 
 	@Autowired
 	private MockMvcJsonResourceLoader resourceLoader;
 
 	@Autowired
-	MockGoogleSearchService googleSearchService;
-	
+	MockExampleSearchResultProvider exampleSearchResultProvider;
+
 	private SearchEntryPointResource getEntryPoint() {
 
 		HalApiClient apiClient = HalApiClient.create(resourceLoader, RequestMetricsCollector.create());
@@ -56,7 +56,7 @@ public class GoogleSearchIntegrationTest {
 	@Test
 	public void first_page_should_render_if_no_results_are_available() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 0);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 0);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMap(this::getResultsOnPage).blockingGet();
 
@@ -66,18 +66,18 @@ public class GoogleSearchIntegrationTest {
 	@Test
 	public void first_page_should_contain_max_number_of_results_per_apge() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 35);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 35);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMap(this::getResultsOnPage).blockingGet();
 
 		assertThat(resultsOnFirstPage).hasSize(25);
-		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Google Search Result #0");
+		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Example Search Result #0");
 	}
 
 	@Test
 	public void first_page_should_have_no_prev_link() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 35);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 35);
 
 		getFirstPage().flatMapMaybe(SearchResultPageResource::getPreviousPage).test().assertComplete().assertNoValues();
 	}
@@ -85,7 +85,7 @@ public class GoogleSearchIntegrationTest {
 	@Test
 	public void first_page_should_have_no_next_link_if_all_results_fit_on_one_page() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 15);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 15);
 
 		getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage).test().assertComplete().assertNoValues();
 	}
@@ -93,37 +93,37 @@ public class GoogleSearchIntegrationTest {
 	@Test
 	public void first_page_should_have_next_link_to_second_page() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 35);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 35);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage)
 				.flatMapSingle(this::getResultsOnPage).blockingGet();
 
 		assertThat(resultsOnFirstPage).hasSize(10);
-		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Google Search Result #25");
+		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Example Search Result #25");
 	}
 
 	@Test
 	public void second_page_should_have_prev_link_to_first_page() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 35);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 35);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage)
 				.flatMap(SearchResultPageResource::getPreviousPage).flatMapSingle(this::getResultsOnPage).blockingGet();
 
 		assertThat(resultsOnFirstPage).hasSize(25);
-		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Google Search Result #0");
+		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Example Search Result #0");
 	}
 
 	@Test
 	public void second_page_should_have_next_link_to_third_page() throws Exception {
 
-		googleSearchService.setNumResultsForQuery(QUERY, 51);
+		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 51);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage)
 				.flatMap(SearchResultPageResource::getNextPage).flatMapSingle(this::getResultsOnPage).blockingGet();
 
 		assertThat(resultsOnFirstPage).hasSize(1);
-		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Google Search Result #50");
+		assertThat(resultsOnFirstPage.get(0).title).isEqualTo("Example Search Result #50");
 	}
 
 	@Test

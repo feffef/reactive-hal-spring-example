@@ -24,10 +24,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.reactivex.rxjava3.core.Single;
+import io.wcm.caravan.hal.resource.HalResource;
+import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
 import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
-import io.wcm.caravan.reha.api.common.HalResponse;
-import io.wcm.caravan.hal.resource.HalResource;
 
 @Component
 public class MockMvcJsonResourceLoader implements JsonResourceLoader {
@@ -56,13 +56,10 @@ public class MockMvcJsonResourceLoader implements JsonResourceLoader {
 
 	private MockHttpServletResponse getServletResponse(String uri) throws Exception {
 
-		MvcResult asyncResult = mockMvc.perform(get(uri)).andExpect(request().asyncStarted())
-				.andReturn();
+		MvcResult asyncResult = mockMvc.perform(get(uri)).andExpect(request().asyncStarted()).andReturn();
 
-		MvcResult mvcResult = mockMvc.perform(asyncDispatch(asyncResult))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(HalResource.CONTENT_TYPE))
-				.andReturn(); 
+		MvcResult mvcResult = mockMvc.perform(asyncDispatch(asyncResult)).andExpect(status().isOk())
+				.andExpect(content().contentType(HalResource.CONTENT_TYPE)).andReturn();
 
 		return mvcResult.getResponse();
 	}
@@ -83,9 +80,7 @@ public class MockMvcJsonResourceLoader implements JsonResourceLoader {
 
 		HalResource hal = parseHalResource(mvcResponse);
 
-		HalResponse halResponse = new HalResponse()
-				.withBody(hal)
-				.withStatus(mvcResponse.getStatus())
+		HalResponse halResponse = new HalResponse().withBody(hal).withStatus(mvcResponse.getStatus())
 				.withContentType(mvcResponse.getContentType());
 
 		String cacheControl = mvcResponse.getHeader("Cache-Control");

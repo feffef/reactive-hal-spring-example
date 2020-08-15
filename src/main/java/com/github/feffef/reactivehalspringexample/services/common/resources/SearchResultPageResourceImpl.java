@@ -1,46 +1,45 @@
-package com.github.feffef.reactivehalspringexample.services.googlesearch.resource;
+package com.github.feffef.reactivehalspringexample.services.common.resources;
 
 import java.util.concurrent.TimeUnit;
 
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
-import com.github.feffef.reactivehalspringexample.services.googlesearch.context.GoogleSearchRequestContext;
-import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
-import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchService;
+import com.github.feffef.reactivehalspringexample.services.common.context.SearchProviderRequestContext;
+import com.github.feffef.reactivehalspringexample.services.common.services.SearchProviderResult;
 
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.hal.resource.Link;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 
-public class GoogleSearchResultPageResource implements SearchResultPageResource, LinkableResource {
+public class SearchResultPageResourceImpl implements SearchResultPageResource, LinkableResource {
 
 	private final static int RESULTS_PER_PAGE = 25;
 
-	private final GoogleSearchRequestContext request;
+	private final SearchProviderRequestContext request;
 
 	private final String query;
 	private final Integer delayMs;
 	private final Integer startIndex;
 
-	private Single<GoogleSearchService.GoogleSearchResult> pageResult;
+	private Single<SearchProviderResult> pageResult;
 
-	public GoogleSearchResultPageResource(GoogleSearchRequestContext request, String query, Integer delayMs,
+	public SearchResultPageResourceImpl(SearchProviderRequestContext request, String query, Integer delayMs,
 			Integer startIndex) {
 		this.request = request;
 		this.query = query;
 		this.delayMs = delayMs;
 		this.startIndex = startIndex;
 
-		this.pageResult = request.getSearchService().getResults(query, startIndex, RESULTS_PER_PAGE).cache();
+		this.pageResult = request.getSearchResultProvider().getResults(query, startIndex, RESULTS_PER_PAGE).cache();
 	}
 
 	@Override
 	public Observable<SearchResultResource> getResults() {
 
 		return pageResult.flatMapObservable(r -> Observable.fromIterable(r.getResultsOnPage()))
-				.delay(delayMs, TimeUnit.MILLISECONDS, false).map(GoogleSearchResultResource::new);
+				.delay(delayMs, TimeUnit.MILLISECONDS, false).map(SearchResultResourceImpl::new);
 	}
 
 	@Override
@@ -67,12 +66,11 @@ public class GoogleSearchResultPageResource implements SearchResultPageResource,
 	}
 
 	private Maybe<SearchResultPageResource> linkToPage(int fromIndex) {
-		return Maybe.just(new GoogleSearchResultPageResource(request, query, delayMs, fromIndex));
+		return Maybe.just(new SearchResultPageResourceImpl(request, query, delayMs, fromIndex));
 	}
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(GoogleSearchController.class,
-				ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
+		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
 	}
 }
