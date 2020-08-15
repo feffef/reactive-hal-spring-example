@@ -17,6 +17,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.FlowableEmitter;
 import io.reactivex.rxjava3.core.FlowableOnSubscribe;
 import io.reactivex.rxjava3.core.MaybeObserver;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -25,6 +26,26 @@ import io.reactivex.rxjava3.disposables.Disposable;
 public class MetaSearchResultMerger {
 
 	public Flowable<SearchResult> createAutoPagingFlowable(SearchResultPageResource firstPage) {
+
+		Flowable<SearchResult> resultsOnFirstPage = getResultsOnPage(firstPage);
+
+		Flowable<SearchResult> resultsOnFollowingPages = getResultsOnFollowingPages(firstPage);
+
+		return resultsOnFirstPage.concatWith(resultsOnFollowingPages);
+	}
+
+	private Flowable<SearchResult> getResultsOnPage(SearchResultPageResource page) {
+		return page.getResults().map(SearchResultResource::getProperties).toFlowable(BackpressureStrategy.BUFFER);
+	}
+
+	private Flowable<SearchResult> getResultsOnFollowingPages(SearchResultPageResource currentPage) {
+
+		return currentPage.getNextPage().flatMapPublisher(page -> {
+			return getResultsOnPage(page).concatWith(getResultsOnFollowingPages(page));
+		});
+	}
+
+	public Flowable<SearchResult> createAutoPagingFlowableOld(SearchResultPageResource firstPage) {
 
 		return Flowable.create(new PagedResultPulling(firstPage), BackpressureStrategy.BUFFER);
 	}
