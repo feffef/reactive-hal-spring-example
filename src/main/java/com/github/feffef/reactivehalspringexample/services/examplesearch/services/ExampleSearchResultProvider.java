@@ -16,6 +16,8 @@ import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
 @Service
 public class ExampleSearchResultProvider implements SearchResultProvider {
 
+	public static final int MAX_RESULTS_PER_PAGE = 25;
+
 	@Override
 	public Single<SearchProviderResult> getResults(String query, int startIndex, int numResults) {
 
@@ -53,9 +55,13 @@ public class ExampleSearchResultProvider implements SearchResultProvider {
 		return result;
 	}
 
-	@Override
-	public int getTotalNumResults(String query) {
+	protected int getTotalNumResults(String query) {
 		return Math.abs(query.hashCode()) % 100;
+	}
+
+	@Override
+	public int getMaxResultsPerPage() {
+		return MAX_RESULTS_PER_PAGE;
 	}
 
 }

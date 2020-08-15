@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.services.examplesearch.controller;
+package com.github.feffef.reactivehalspringexample.services.googlesearch.controller;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
@@ -19,21 +19,21 @@ import com.github.feffef.reactivehalspringexample.services.common.controller.Sea
 import com.github.feffef.reactivehalspringexample.services.common.resources.SearchEntryPointResourceImpl;
 import com.github.feffef.reactivehalspringexample.services.common.resources.SearchResultPageResourceImpl;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
-import com.github.feffef.reactivehalspringexample.services.examplesearch.services.ExampleSearchResultProvider;
+import com.github.feffef.reactivehalspringexample.services.googlesearch.services.GoogleSearchResultProvider;
 
 import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/search/example")
-public class ExampleSearchController implements SearchProviderController {
+@RequestMapping("/search/google")
+public class GoogleSearchController implements SearchProviderController {
 
 	@Autowired
 	private HalApiSupport halSupport;
 
 	@Autowired
-	private ExampleSearchResultProvider searchService;
+	private GoogleSearchResultProvider googleResultProvider;
 
 	@Override
 	@GetMapping()
@@ -61,12 +61,12 @@ public class ExampleSearchController implements SearchProviderController {
 			implements SearchProviderRequestContext {
 
 		RequestContext(Reha reha) {
-			super(reha, ExampleSearchController.class);
+			super(reha, GoogleSearchController.class);
 		}
 
 		@Override
 		public SearchResultProvider getSearchResultProvider() {
-			return searchService;
+			return googleResultProvider;
 		}
 
 	}

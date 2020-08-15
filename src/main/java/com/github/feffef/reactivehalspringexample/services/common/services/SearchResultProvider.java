@@ -6,6 +6,6 @@ public interface SearchResultProvider {
 
 	Single<SearchProviderResult> getResults(String query, int startIndex, int numResults);
 
-	int getTotalNumResults(String query);
+	int getMaxResultsPerPage();
 
 }

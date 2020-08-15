@@ -15,15 +15,15 @@ import io.wcm.caravan.reha.api.resources.LinkableResource;
 
 public class SearchResultPageResourceImpl implements SearchResultPageResource, LinkableResource {
 
-	private final static int RESULTS_PER_PAGE = 25;
-
 	private final SearchProviderRequestContext request;
 
 	private final String query;
 	private final Integer delayMs;
 	private final Integer startIndex;
 
-	private Single<SearchProviderResult> pageResult;
+	private final int maxResultsPerPage;
+
+	private final Single<SearchProviderResult> pageResult;
 
 	public SearchResultPageResourceImpl(SearchProviderRequestContext request, String query, Integer delayMs,
 			Integer startIndex) {
@@ -32,7 +32,9 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 		this.delayMs = delayMs;
 		this.startIndex = startIndex;
 
-		this.pageResult = request.getSearchResultProvider().getResults(query, startIndex, RESULTS_PER_PAGE).cache();
+		this.maxResultsPerPage = request.getSearchResultProvider().getMaxResultsPerPage();
+
+		this.pageResult = request.getSearchResultProvider().getResults(query, startIndex, maxResultsPerPage).cache();
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 	public Maybe<SearchResultPageResource> getNextPage() {
 
 		return pageResult.flatMapMaybe(r -> {
-			int nextIndex = startIndex + RESULTS_PER_PAGE;
+			int nextIndex = startIndex + maxResultsPerPage;
 			if (r.getTotalNumResults() > nextIndex) {
 				return linkToPage(nextIndex);
 			}
@@ -58,7 +60,7 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 	public Maybe<SearchResultPageResource> getPreviousPage() {
 
 		if (startIndex > 0) {
-			int prevIndex = startIndex - RESULTS_PER_PAGE;
+			int prevIndex = startIndex - maxResultsPerPage;
 			return linkToPage(prevIndex);
 		}
 
