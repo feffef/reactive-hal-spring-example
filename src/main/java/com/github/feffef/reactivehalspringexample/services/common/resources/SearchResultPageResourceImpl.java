@@ -2,6 +2,7 @@ package com.github.feffef.reactivehalspringexample.services.common.resources;
 
 import java.util.concurrent.TimeUnit;
 
+import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.services.common.context.SearchProviderRequestContext;
@@ -18,30 +19,29 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 	private final SearchProviderRequestContext request;
 
 	private final String query;
-	private final Integer delayMs;
+	private final SearchOptions options;
 	private final Integer startIndex;
 
 	private final int maxResultsPerPage;
 
 	private final Single<SearchProviderResult> pageResult;
 
-	public SearchResultPageResourceImpl(SearchProviderRequestContext request, String query, Integer delayMs,
+	public SearchResultPageResourceImpl(SearchProviderRequestContext request, String query, SearchOptions options,
 			Integer startIndex) {
 		this.request = request;
 		this.query = query;
-		this.delayMs = delayMs;
+		this.options = options;
 		this.startIndex = startIndex;
 
 		this.maxResultsPerPage = request.getSearchResultProvider().getMaxResultsPerPage();
 
-		this.pageResult = request.getSearchResultProvider().getResults(query, startIndex, maxResultsPerPage).cache();
+		this.pageResult = request.getSearchResultProvider().getResults(query, startIndex, options).cache();
 	}
 
 	@Override
 	public Observable<SearchResultResource> getResults() {
 
-		return pageResult.flatMapObservable(r -> Observable.fromIterable(r.getResultsOnPage()))
-				.delay(delayMs, TimeUnit.MILLISECONDS, false).map(SearchResultResourceImpl::new);
+		return pageResult.flatMapObservable(r -> Observable.fromIterable(r.getResultsOnPage())).map(SearchResultResourceImpl::new);
 	}
 
 	@Override
@@ -68,11 +68,11 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 	}
 
 	private Maybe<SearchResultPageResource> linkToPage(int fromIndex) {
-		return Maybe.just(new SearchResultPageResourceImpl(request, query, delayMs, fromIndex));
+		return Maybe.just(new SearchResultPageResourceImpl(request, query, options, fromIndex));
 	}
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
+		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, options.delayMs, startIndex));
 	}
 }

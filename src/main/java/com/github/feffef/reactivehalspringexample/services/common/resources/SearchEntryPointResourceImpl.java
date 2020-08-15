@@ -20,7 +20,9 @@ public class SearchEntryPointResourceImpl implements SearchEntryPointResource, L
 	@Override
 	public Single<SearchResultPageResource> executeSearch(String query, SearchOptions options) {
 
-		return Single.just(new SearchResultPageResourceImpl(request, query, null, 0));
+		SearchOptions defaultOptions = request.getSearchResultProvider().getDefaultOptions();
+		
+		return Single.just(new SearchResultPageResourceImpl(request, query, defaultOptions, 0));
 	}
 
 	@Override

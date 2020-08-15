@@ -20,7 +20,7 @@ public class MetaSearchEntryPointResource implements SearchEntryPointResource, L
 	@Override
 	public Single<SearchResultPageResource> executeSearch(String query, SearchOptions options) {
 
-		return Single.just(new MetaSearchResultPageResource(request, query, null, 0));
+		return Single.just(new MetaSearchResultPageResource(request, query, options, 0));
 	}
 
 	@Override

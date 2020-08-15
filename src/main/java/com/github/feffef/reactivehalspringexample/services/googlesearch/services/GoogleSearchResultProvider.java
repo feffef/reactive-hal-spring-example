@@ -12,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.common.WebClientJsonResourceLoader;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchProviderResult;
@@ -19,7 +20,6 @@ import com.github.feffef.reactivehalspringexample.services.common.services.Searc
 
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.reha.api.common.HalResponse;
-import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
 import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
 import io.wcm.caravan.reha.api.exceptions.HalApiServerException;
 
@@ -30,7 +30,7 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 
 	public static final int MAX_RESULTS_PER_PAGE = 10;
 
-	private static final String API_KEY = "AIzaSyC_FALX9-v7EkxqqaB7a-DBt2qX8Ibx3I";
+	private static final String API_KEY = "AIzaSyC_FALX9-v7EkxqqaB7a-DBt2qX8Ibx3IU";
 	private static final String SEARCH_ENGINE_ID = "011960927638221306647:9gonapa1yw0";
 
 	private static final String GOOGLE_CSE_URL = "https://customsearch.googleapis.com/customsearch/v1";
@@ -39,7 +39,7 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 	private WebClientJsonResourceLoader resourceLoader;
 
 	@Override
-	public Single<SearchProviderResult> getResults(String query, int startIndex, int numResults) {
+	public Single<SearchProviderResult> getResults(String query, int startIndex, SearchOptions options) {
 
 		if (query == null) {
 			return Single.error(new HalApiDeveloperException("null query was given"));
@@ -98,6 +98,13 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 	@Override
 	public int getMaxResultsPerPage() {
 		return MAX_RESULTS_PER_PAGE;
+	}
+
+	@Override
+	public SearchOptions getDefaultOptions() {
+		SearchOptions options = new SearchOptions();
+		options.delayMs = 0;
+		return options;
 	}
 
 }

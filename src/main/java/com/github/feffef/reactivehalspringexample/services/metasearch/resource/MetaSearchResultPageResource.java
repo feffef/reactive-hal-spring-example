@@ -1,5 +1,7 @@
 package com.github.feffef.reactivehalspringexample.services.metasearch.resource;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
@@ -19,24 +21,22 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 	private final MetaSearchRequestContext request;
 
 	private final String query;
-	private final Integer delayMs;
+	private final SearchOptions options;
 	private final Integer startIndex;
 
 	private Flowable<SearchResult> resultsOnPagePlusOne;
 
-	public MetaSearchResultPageResource(MetaSearchRequestContext request, String query, Integer delayMs,
+	public MetaSearchResultPageResource(MetaSearchRequestContext request, String query, SearchOptions options,
 			Integer startIndex) {
 		this.request = request;
 		this.query = query;
-		this.delayMs = delayMs;
+		this.options = ObjectUtils.defaultIfNull(options, new SearchOptions());
 		this.startIndex = startIndex;
 
 		this.resultsOnPagePlusOne = getResultsOnPagePlusOneMore().cache();
 	}
 
 	private Flowable<SearchResult> getResultsOnPagePlusOneMore() {
-		SearchOptions options = new SearchOptions();
-		options.delayMs = delayMs;
 
 		return request.getAllExampleResults(query, options).skip(startIndex).take(RESULTS_PER_PAGE + 1);
 	}
@@ -69,11 +69,12 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 		if (index < 0) {
 			return Maybe.empty();
 		}
-		return Maybe.just(new MetaSearchResultPageResource(request, query, delayMs, index));
+		return Maybe.just(new MetaSearchResultPageResource(request, query, options, index));
 	}
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, delayMs, startIndex));
+		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, options.delayMs, options.skipExample,
+				options.skipGoogle, startIndex));
 	}
 }

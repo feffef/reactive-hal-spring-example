@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.function.Function;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.services.M
 import io.reactivex.rxjava3.core.Flowable;
 import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
+import jdk.nashorn.internal.objects.annotations.Optimistic;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -44,11 +46,16 @@ public class MetaSearchController {
 	}
 
 	@GetMapping("/results")
-	public Mono<ResponseEntity<JsonNode>> getResultPage(@RequestParam("query") String query,
-			@RequestParam("delayMs") Integer delayMs, @RequestParam("startIndex") Integer startIndex) {
+	public Mono<ResponseEntity<JsonNode>> getResultPage(@RequestParam String query,
+			@RequestParam(required = false) Integer delayMs, @RequestParam(required = false) Boolean skipExample,
+			@RequestParam(required = false) Boolean skipGoogle, @RequestParam Integer startIndex) {
 
-		return renderResource(
-				request -> new MetaSearchResultPageResource(request, query, defaultIfNull(delayMs, 0), startIndex));
+		SearchOptions options = new SearchOptions();
+		options.delayMs = defaultIfNull(delayMs, 0);
+		options.skipExample = defaultIfNull(skipExample, false);
+		options.skipGoogle = defaultIfNull(skipGoogle, false);
+
+		return renderResource(request -> new MetaSearchResultPageResource(request, query, options, startIndex));
 	}
 
 	Mono<ResponseEntity<JsonNode>> renderResource(
@@ -71,7 +78,11 @@ public class MetaSearchController {
 		@Override
 		public Flowable<SearchResult> getAllExampleResults(String query, SearchOptions options) {
 
-			return getExampleSearchEntryPoint().executeSearch(query, options).flatMapPublisher(merger::getAllResults);
+			SearchOptions exampleOptions = new SearchOptions();
+			exampleOptions.delayMs = options.delayMs;
+
+			return getExampleSearchEntryPoint().executeSearch(query, exampleOptions)
+					.flatMapPublisher(merger::getAllResults);
 		}
 	}
 }

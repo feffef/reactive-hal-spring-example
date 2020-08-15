@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.common.AbstractSpringRehaRequestContext;
 import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
 import com.github.feffef.reactivehalspringexample.services.common.context.SearchProviderRequestContext;
@@ -47,8 +48,10 @@ public class GoogleSearchController implements SearchProviderController {
 	public Mono<ResponseEntity<JsonNode>> getResultPage(@RequestParam("query") String query,
 			@RequestParam("delayMs") Integer delayMs, @RequestParam("startIndex") Integer startIndex) {
 
-		return renderResource(
-				request -> new SearchResultPageResourceImpl(request, query, defaultIfNull(delayMs, 0), startIndex));
+		SearchOptions options = new SearchOptions();
+		options.delayMs = delayMs;
+
+		return renderResource(request -> new SearchResultPageResourceImpl(request, query, options, startIndex));
 	}
 
 	Mono<ResponseEntity<JsonNode>> renderResource(
