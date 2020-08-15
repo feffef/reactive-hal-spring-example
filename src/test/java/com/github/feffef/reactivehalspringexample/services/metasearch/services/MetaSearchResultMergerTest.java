@@ -157,7 +157,7 @@ public class MetaSearchResultMergerTest {
 
 		SearchResultPageResource firstPage = new StaticTestResultPage(numResults, RESULTS_PER_PAGE);
 
-		Flowable<SearchResult> allResults = merger.getAllResults(firstPage);
+		Flowable<SearchResult> allResults = merger.createAutoPagingFlowable(firstPage);
 
 		return allResults;
 	}
@@ -216,7 +216,7 @@ public class MetaSearchResultMergerTest {
 		AsyncResultMock arm = new AsyncResultMock();
 
 		MetaSearchResultMerger merger = new MetaSearchResultMerger();
-		Flowable<SearchResult> allResults = merger.getAllResults(arm.getFirstPage());
+		Flowable<SearchResult> allResults = merger.createAutoPagingFlowable(arm.getFirstPage());
 
 		assertThat(arm.getNumSubjects()).isEqualTo(1);
 		assertThat(arm.getSubject(0).hasObservers()).isEqualTo(false);
@@ -248,7 +248,7 @@ public class MetaSearchResultMergerTest {
 		AsyncResultMock arm = new AsyncResultMock();
 
 		MetaSearchResultMerger merger = new MetaSearchResultMerger();
-		Flowable<SearchResult> allResults = merger.getAllResults(arm.getFirstPage());
+		Flowable<SearchResult> allResults = merger.createAutoPagingFlowable(arm.getFirstPage());
 
 		Flowable<SearchResult> limitedResults = allResults.take(5);
 

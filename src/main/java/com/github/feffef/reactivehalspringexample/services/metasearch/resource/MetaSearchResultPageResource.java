@@ -33,12 +33,28 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 		this.options = ObjectUtils.defaultIfNull(options, new SearchOptions());
 		this.startIndex = startIndex;
 
-		this.resultsOnPagePlusOne = getResultsOnPagePlusOneMore().cache();
+		if (query == null) {
+			this.resultsOnPagePlusOne = Flowable.empty();
+		} else {
+			this.resultsOnPagePlusOne = getResultsOnPagePlusOneMore().cache();
+		}
 	}
 
 	private Flowable<SearchResult> getResultsOnPagePlusOneMore() {
 
-		return request.getAllExampleResults(query, options).skip(startIndex).take(RESULTS_PER_PAGE + 1);
+		Flowable<SearchResult> exampleResults = request.getAllExampleResults(query, options);
+		Flowable<SearchResult> googleResults = request.getGoogleResults(query, options);
+
+		Flowable<SearchResult> mergedResults;
+		if (options.skipGoogle) {
+			mergedResults = exampleResults;
+		} else if (options.skipExample) {
+			mergedResults = googleResults;
+		} else {
+			mergedResults = request.merge(exampleResults, googleResults);
+		}
+
+		return mergedResults.skip(startIndex).take(RESULTS_PER_PAGE + 1);
 	}
 
 	@Override

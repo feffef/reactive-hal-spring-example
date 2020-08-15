@@ -4,7 +4,6 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.function.Function;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,6 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.services.M
 import io.reactivex.rxjava3.core.Flowable;
 import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
-import jdk.nashorn.internal.objects.annotations.Optimistic;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -71,18 +69,46 @@ public class MetaSearchController {
 			super(reha, MetaSearchController.class);
 		}
 
-		private SearchEntryPointResource getExampleSearchEntryPoint() {
-			return getEntryPoint("http://localhost:8080/search/example", SearchEntryPointResource.class);
+		private SearchEntryPointResource getSearchEntryPoint(String entryPointUri) {
+
+			return getEntryPoint(entryPointUri, SearchEntryPointResource.class);
+		}
+
+		private Flowable<SearchResult> executeSearchAndGetResultsAsFlowable(SearchEntryPointResource searchEntryPoint,
+				String query, SearchOptions options) {
+
+			return searchEntryPoint.executeSearch(query, options).flatMapPublisher(merger::createAutoPagingFlowable);
 		}
 
 		@Override
-		public Flowable<SearchResult> getAllExampleResults(String query, SearchOptions options) {
+		public Flowable<SearchResult> getAllExampleResults(String query, SearchOptions metaOptions) {
 
 			SearchOptions exampleOptions = new SearchOptions();
-			exampleOptions.delayMs = options.delayMs;
+			exampleOptions.delayMs = metaOptions.delayMs;
 
-			return getExampleSearchEntryPoint().executeSearch(query, exampleOptions)
-					.flatMapPublisher(merger::getAllResults);
+			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint("http://localhost:8080/search/example");
+
+			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, exampleOptions);
+		}
+
+		@Override
+		public Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions) {
+
+			SearchOptions googleOptions = new SearchOptions();
+
+			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint("http://localhost:8080/search/google");
+
+			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, googleOptions);
+		}
+
+		@Override
+		public Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults,
+				Flowable<SearchResult> googleResults) {
+
+			Flowable<Flowable<SearchResult>> zip = exampleResults.zipWith(googleResults, (r1, r2) -> {
+				return Flowable.fromArray(r1, r2);
+			});
+			return zip.flatMap(z -> z);
 		}
 	}
 }

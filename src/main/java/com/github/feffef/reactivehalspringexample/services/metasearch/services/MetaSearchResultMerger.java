@@ -24,7 +24,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 @Component
 public class MetaSearchResultMerger {
 
-	public Flowable<SearchResult> getAllResults(SearchResultPageResource firstPage) {
+	public Flowable<SearchResult> createAutoPagingFlowable(SearchResultPageResource firstPage) {
 
 		return Flowable.create(new PagedResultPulling(firstPage), BackpressureStrategy.BUFFER);
 	}

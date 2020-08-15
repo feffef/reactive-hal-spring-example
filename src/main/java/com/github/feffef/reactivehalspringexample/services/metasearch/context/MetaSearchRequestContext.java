@@ -9,5 +9,9 @@ import io.reactivex.rxjava3.core.Flowable;
 
 public interface MetaSearchRequestContext extends SpringRehaRequestContext<MetaSearchController> {
 
-	Flowable<SearchResult> getAllExampleResults(String query, SearchOptions options);
+	Flowable<SearchResult> getAllExampleResults(String query, SearchOptions metaOptions);
+
+	Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions);
+
+	Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults, Flowable<SearchResult> googleResults);
 }
