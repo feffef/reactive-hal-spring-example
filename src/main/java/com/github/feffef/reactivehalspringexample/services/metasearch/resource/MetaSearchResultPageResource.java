@@ -42,17 +42,7 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 
 	private Flowable<SearchResult> getResultsOnPagePlusOneMore() {
 
-		Flowable<SearchResult> firstResults = request.getResultsFromFirst(query, options);
-		Flowable<SearchResult> secondResults = request.getResultsFromSecond(query, options);
-
-		Flowable<SearchResult> mergedResults;
-		if (options.skipSecond) {
-			mergedResults = firstResults;
-		} else if (options.skipFirst) {
-			mergedResults = secondResults;
-		} else {
-			mergedResults = request.merge(firstResults, secondResults);
-		}
+		Flowable<SearchResult> mergedResults = request.fetchAndMergeResults(query, options);
 
 		return mergedResults.skip(startIndex).take(RESULTS_PER_PAGE + 1);
 	}

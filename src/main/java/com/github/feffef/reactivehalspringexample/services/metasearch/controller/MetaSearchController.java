@@ -12,17 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.services.common.context.AbstractExampleRequestContext;
-import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchController;
-import com.github.feffef.reactivehalspringexample.services.examplesearch.second.SecondSearchController;
-import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchResultPageResource;
-import com.github.feffef.reactivehalspringexample.services.metasearch.services.MetaSearchResultMerger;
+import com.github.feffef.reactivehalspringexample.services.metasearch.results.MetaSearchResultProvider;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
@@ -36,9 +32,6 @@ public class MetaSearchController {
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor requestProcessor;
-
-	@Autowired
-	private MetaSearchResultMerger merger;
 
 	@GetMapping()
 	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
@@ -68,66 +61,17 @@ public class MetaSearchController {
 	class RequestContext extends AbstractExampleRequestContext<MetaSearchController>
 			implements MetaSearchRequestContext {
 
+		private final MetaSearchResultProvider provider;
+
 		RequestContext(SpringReactorReha reha) {
 			super(reha, MetaSearchController.class);
-		}
 
-		private SearchEntryPointResource getSearchEntryPoint(String basePath) {
-
-			String baseUri = "http://localhost:8080";
-
-			String entryPointUri = baseUri + basePath;
-
-			return getEntryPoint(entryPointUri, SearchEntryPointResource.class);
-		}
-
-		private Flowable<SearchResult> executeSearchAndGetResultsAsFlowable(SearchEntryPointResource searchEntryPoint,
-				String query, SearchOptions options) {
-
-			return searchEntryPoint.executeSearch(query, options).flatMapPublisher(merger::createAutoPagingFlowable);
+			this.provider = new MetaSearchResultProvider(reha);
 		}
 
 		@Override
-		public Flowable<SearchResult> getResultsFromFirst(String query, SearchOptions metaOptions) {
-
-			SearchOptions exampleOptions = new SearchOptions();
-			exampleOptions.delayMs = metaOptions.delayMs;
-
-			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint(FirstSearchController.BASE_PATH);
-
-			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, exampleOptions);
-		}
-
-		@Override
-		public Flowable<SearchResult> getResultsFromSecond(String query, SearchOptions metaOptions) {
-
-			SearchOptions exampleOptions = new SearchOptions();
-			exampleOptions.delayMs = 500;
-
-			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint(SecondSearchController.BASE_PATH);
-
-			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, exampleOptions);
-		}
-
-		@Override
-		public Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions) {
-
-			SearchOptions googleOptions = new SearchOptions();
-
-			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint(GoogleSearchController.BASE_PATH);
-
-			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, googleOptions);
-		}
-
-		@Override
-		public Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults,
-				Flowable<SearchResult> googleResults) {
-
-			Flowable<Flowable<SearchResult>> zip = exampleResults.rebatchRequests(2)
-					.zipWith(googleResults.rebatchRequests(2), (r1, r2) -> {
-						return Flowable.fromArray(r1, r2);
-					});
-			return zip.flatMap(z -> z);
+		public Flowable<SearchResult> fetchAndMergeResults(String query, SearchOptions options) {
+			return provider.getMetaSearchResults(query, options);
 		}
 	}
 }
