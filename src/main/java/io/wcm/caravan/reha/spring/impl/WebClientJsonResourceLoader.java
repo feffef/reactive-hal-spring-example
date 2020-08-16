@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
 import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
@@ -47,7 +48,7 @@ public class WebClientJsonResourceLoader implements JsonResourceLoader {
 		Mono<HalResponse> halResponse = response.toEntity(JsonNode.class).onErrorMap(ex -> remapException(ex, uri))
 				.map(WebClientJsonResourceLoader::toHalResponse);
 
-		return Single.fromCompletionStage(halResponse.toFuture());
+		return Single.fromCompletionStage(halResponse.toFuture()).observeOn(Schedulers.computation());
 	}
 
 	// FIXME: move to util class
