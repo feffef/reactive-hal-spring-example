@@ -4,6 +4,7 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.core.Flowable;
 
@@ -31,11 +32,26 @@ public class MetaSearchResultMerger {
 
 	public Flowable<SearchResult> merge(Flowable<SearchResult> firstResults, Flowable<SearchResult> secondResults) {
 
-		Flowable<Flowable<SearchResult>> zip = firstResults.rebatchRequests(2).zipWith(secondResults.rebatchRequests(2),
-				(r1, r2) -> {
-					return Flowable.fromArray(r1, r2);
-				});
-		return zip.flatMap(z -> z);
+		// the Flowables created by #createAutoPagingFlowable show some undesirable behaviour once .zipWith
+		// is being used on them. They will no longer only fetch as many upstream results as required, but will
+		// eagerly fetch as many results as they can retrieve. This can be avoided by using #rebatchRequests
+		Flowable<SearchResult> firstRebatched = firstResults.rebatchRequests(2);
+		Flowable<SearchResult> secondRebatched = secondResults.rebatchRequests(2);
+
+		// first use zip to find interleave as many results as are available in *both* flowables
+		Flowable<SearchResult> zipped = firstRebatched.zipWith(secondRebatched, (r1, r2) -> {
+			return Flowable.fromArray(r1, r2);
+		}).flatMap(z -> z);
+
+		// then add the remaining flowables (from the longer chain)
+		// this is done using Flowable.defer to avoid the call on zipped.count() if the end of the zipped stream hasn't been reached yet
+		return zipped.concatWith(Flowable.defer(() -> getRemaining(zipped, firstRebatched)))
+				.concatWith(Flowable.defer(() -> getRemaining(zipped, secondRebatched)));
+	}
+
+	private Flowable<SearchResult> getRemaining(Flowable<SearchResult> zipped, Flowable<SearchResult> results) {
+
+		return zipped.count().flatMapPublisher(numZipped -> results.skip(numZipped / 2));
 	}
 
 }
