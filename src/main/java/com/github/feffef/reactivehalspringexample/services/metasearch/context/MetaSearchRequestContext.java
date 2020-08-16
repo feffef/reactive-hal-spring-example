@@ -14,4 +14,6 @@ public interface MetaSearchRequestContext extends SpringRehaRequestContext<MetaS
 	Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions);
 
 	Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults, Flowable<SearchResult> googleResults);
+
+	Flowable<SearchResult> getSecondResults(String query, SearchOptions metaOptions);
 }

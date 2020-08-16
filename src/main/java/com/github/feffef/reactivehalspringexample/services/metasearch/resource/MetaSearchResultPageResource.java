@@ -43,7 +43,7 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 	private Flowable<SearchResult> getResultsOnPagePlusOneMore() {
 
 		Flowable<SearchResult> exampleResults = request.getAllExampleResults(query, options);
-		Flowable<SearchResult> googleResults = request.getGoogleResults(query, options);
+		Flowable<SearchResult> googleResults = request.getSecondResults(query, options);
 
 		Flowable<SearchResult> mergedResults;
 		if (options.skipGoogle) {

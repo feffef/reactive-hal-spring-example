@@ -92,6 +92,17 @@ public class MetaSearchController {
 		}
 
 		@Override
+		public Flowable<SearchResult> getSecondResults(String query, SearchOptions metaOptions) {
+
+			SearchOptions exampleOptions = new SearchOptions();
+			exampleOptions.delayMs = 500;
+
+			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint("http://localhost:8080/search/second");
+
+			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, exampleOptions);
+		}
+
+		@Override
 		public Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions) {
 
 			SearchOptions googleOptions = new SearchOptions();
@@ -105,7 +116,7 @@ public class MetaSearchController {
 		public Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults,
 				Flowable<SearchResult> googleResults) {
 
-			Flowable<Flowable<SearchResult>> zip = exampleResults.zipWith(googleResults, (r1, r2) -> {
+			Flowable<Flowable<SearchResult>> zip = exampleResults.rebatchRequests(2).zipWith(googleResults.rebatchRequests(2), (r1, r2) -> {
 				return Flowable.fromArray(r1, r2);
 			});
 			return zip.flatMap(z -> z);
