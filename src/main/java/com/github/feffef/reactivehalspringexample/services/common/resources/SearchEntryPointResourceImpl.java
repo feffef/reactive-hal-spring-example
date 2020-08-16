@@ -27,7 +27,12 @@ public class SearchEntryPointResourceImpl implements SearchEntryPointResource, L
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getEntryPoint());
+
+		Link link = request.createLinkTo(ctrl -> ctrl.getEntryPoint());
+
+		link.setTitle("Entry point of the " + request.getSearchResultProvider().getName() + " service");
+
+		return link;
 	}
 
 }

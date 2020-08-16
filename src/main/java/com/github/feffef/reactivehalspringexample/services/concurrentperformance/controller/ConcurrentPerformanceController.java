@@ -25,8 +25,10 @@ import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/performance/concurrent")
+@RequestMapping(ConcurrentPerformanceController.BASE_PATH)
 public class ConcurrentPerformanceController {
+
+	public static final String BASE_PATH = "/performance/concurrent";
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor springReha;

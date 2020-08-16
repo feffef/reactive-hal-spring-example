@@ -12,4 +12,6 @@ public interface SearchResultProvider {
 
 	SearchOptions getDefaultOptions();
 
+	String getName();
+
 }

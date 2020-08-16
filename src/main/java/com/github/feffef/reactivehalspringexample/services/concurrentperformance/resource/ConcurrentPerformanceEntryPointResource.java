@@ -3,6 +3,7 @@ package com.github.feffef.reactivehalspringexample.services.concurrentperformanc
 import com.github.feffef.reactivehalspringexample.api.performance.PerformanceEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.performance.PerformanceResultResource;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.context.ConcurrentPerformanceRequestContext;
+import com.github.feffef.reactivehalspringexample.services.concurrentperformance.controller.ConcurrentPerformanceController;
 
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.hal.resource.Link;
@@ -24,7 +25,9 @@ public class ConcurrentPerformanceEntryPointResource implements PerformanceEntry
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getEntryPoint());
+
+		return request.createLinkTo(ctrl -> ctrl.getEntryPoint())
+				.setTitle("Entry point of the " + ConcurrentPerformanceController.BASE_PATH + " test service");
 	}
 
 }

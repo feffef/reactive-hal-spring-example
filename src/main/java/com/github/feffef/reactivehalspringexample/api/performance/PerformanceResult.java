@@ -4,13 +4,15 @@ public interface PerformanceResult {
 
 	int getNumResponses();
 
-	long getTotalResponseTime();
+	long getTotalResponseMillis();
 
-	long getMeanResponseTime();
+	long getMeanResponseMillis();
 
-	long getMaxResponseTime();
+	long getMaxResponseMillis();
 
-	long getMinResponseTime();
+	long getMinResponseMillis();
+
+	long getProcessingMillisPerRequest();
 
 	int getNumberOfThreads();
 }

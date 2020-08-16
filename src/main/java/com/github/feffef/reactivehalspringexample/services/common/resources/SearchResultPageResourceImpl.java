@@ -5,6 +5,7 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.services.common.context.SearchProviderRequestContext;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchProviderResult;
+import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
 
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
@@ -72,6 +73,24 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, options.delayMs, startIndex));
+
+		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, options.delayMs, startIndex))
+				.setTitle(getLinkTitle());
+	}
+
+	private String getLinkTitle() {
+
+		SearchResultProvider provider = request.getSearchResultProvider();
+
+		if (query == null) {
+			return "Execute a search query with the " + provider.getName();
+		}
+
+		int resultsPerPage = provider.getMaxResultsPerPage();
+		int pageIndex = startIndex / resultsPerPage;
+		int lastIndex = startIndex + resultsPerPage - 1;
+
+		return "Page " + pageIndex + " with results " + startIndex + "-" + lastIndex + " from the " + provider.getName()
+				+ " service";
 	}
 }

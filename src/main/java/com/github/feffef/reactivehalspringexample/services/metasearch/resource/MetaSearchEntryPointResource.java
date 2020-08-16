@@ -4,6 +4,7 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
+import com.github.feffef.reactivehalspringexample.services.metasearch.controller.MetaSearchController;
 
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.hal.resource.Link;
@@ -26,7 +27,8 @@ public class MetaSearchEntryPointResource implements SearchEntryPointResource, L
 	@Override
 	public Link createLink() {
 
-		return request.createLinkTo(ctrl -> ctrl.getEntryPoint());
+		return request.createLinkTo(ctrl -> ctrl.getEntryPoint())
+				.setTitle("Entrypoint of the " + MetaSearchController.BASE_PATH + " service");
 	}
 
 }

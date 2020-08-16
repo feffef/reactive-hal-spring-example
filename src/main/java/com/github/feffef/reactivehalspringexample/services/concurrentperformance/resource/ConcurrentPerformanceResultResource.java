@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import com.github.feffef.reactivehalspringexample.api.performance.PerformanceResult;
 import com.github.feffef.reactivehalspringexample.api.performance.PerformanceResultResource;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.context.ConcurrentPerformanceRequestContext;
+import com.github.feffef.reactivehalspringexample.services.metasearch.controller.MetaSearchController;
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -54,18 +55,18 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 				.reduce(Math::max);
 
 		Double meanResponseTime = results.stream()
-				.collect(Collectors.averagingLong(PerformanceResult::getTotalResponseTime));
+				.collect(Collectors.averagingLong(PerformanceResult::getTotalResponseMillis));
 
-		Optional<Long> maxResponseTime = results.stream().map(PerformanceResult::getTotalResponseTime)
+		Optional<Long> maxResponseTime = results.stream().map(PerformanceResult::getTotalResponseMillis)
 				.reduce(Math::max);
 
-		Optional<Long> minResponseTime = results.stream().map(PerformanceResult::getTotalResponseTime)
+		Optional<Long> minResponseTime = results.stream().map(PerformanceResult::getTotalResponseMillis)
 				.reduce(Math::min);
 
 		return new PerformanceResult() {
 
 			@Override
-			public long getTotalResponseTime() {
+			public long getTotalResponseMillis() {
 				return totalResponseTime;
 			}
 
@@ -75,7 +76,7 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 			}
 
 			@Override
-			public long getMeanResponseTime() {
+			public long getMeanResponseMillis() {
 				return Math.round(meanResponseTime);
 			}
 
@@ -85,13 +86,18 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 			}
 
 			@Override
-			public long getMaxResponseTime() {
+			public long getMaxResponseMillis() {
 				return maxResponseTime.get();
 			}
 
 			@Override
-			public long getMinResponseTime() {
+			public long getMinResponseMillis() {
 				return minResponseTime.get();
+			}
+
+			@Override
+			public long getProcessingMillisPerRequest() {
+				return (totalResponseTime - delayMs) / numRequests;
 			}
 		};
 	}
@@ -108,7 +114,27 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 			return new PerformanceResult() {
 
 				@Override
-				public long getTotalResponseTime() {
+				public int getNumResponses() {
+					return 1;
+				}
+
+				@Override
+				public long getTotalResponseMillis() {
+					return responseTime;
+				}
+
+				@Override
+				public long getMinResponseMillis() {
+					return responseTime;
+				}
+
+				@Override
+				public long getMeanResponseMillis() {
+					return responseTime;
+				}
+
+				@Override
+				public long getMaxResponseMillis() {
 					return responseTime;
 				}
 
@@ -118,24 +144,10 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 				}
 
 				@Override
-				public long getMeanResponseTime() {
-					return responseTime;
+				public long getProcessingMillisPerRequest() {
+					return responseTime - delayMs;
 				}
 
-				@Override
-				public int getNumResponses() {
-					return 1;
-				}
-
-				@Override
-				public long getMaxResponseTime() {
-					return responseTime;
-				}
-
-				@Override
-				public long getMinResponseTime() {
-					return responseTime;
-				}
 			};
 		});
 	}
@@ -143,7 +155,18 @@ public class ConcurrentPerformanceResultResource implements PerformanceResultRes
 	@Override
 	public Link createLink() {
 
-		return request.createLinkTo(ctrl -> ctrl.getResult(numRequests, delayMs));
+		return request.createLinkTo(ctrl -> ctrl.getResult(numRequests, delayMs)).setTitle(getLinkTitle());
+	}
+
+	private String getLinkTitle() {
+
+		if (numRequests == null) {
+			return "Execute a number of parallel requests with random search terms to the "
+					+ MetaSearchController.BASE_PATH + " service";
+		}
+
+		return "Execution results for " + numRequests + " parallel requests to the " + MetaSearchController.BASE_PATH
+				+ " service";
 	}
 
 }

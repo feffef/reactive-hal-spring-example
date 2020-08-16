@@ -35,6 +35,11 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 
 	private static final String GOOGLE_CSE_URL = "https://customsearch.googleapis.com/customsearch/v1";
 
+	@Override
+	public String getName() {
+		return "google search result provider";
+	}
+
 	@Autowired
 	private WebClientJsonResourceLoader resourceLoader;
 

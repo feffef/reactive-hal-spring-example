@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
-import com.github.feffef.reactivehalspringexample.services.metasearch.results.MetaSearchResultMerger;
 import com.google.common.collect.Iterables;
 
 import io.reactivex.rxjava3.core.Flowable;

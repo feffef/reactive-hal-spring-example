@@ -27,8 +27,10 @@ import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/search/meta")
+@RequestMapping(MetaSearchController.BASE_PATH)
 public class MetaSearchController {
+
+	public static final String BASE_PATH = "/search/meta";
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor requestProcessor;

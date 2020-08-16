@@ -22,6 +22,11 @@ public class SecondSearchResultProvider implements SearchResultProvider {
 	public static final int MAX_RESULTS_PER_PAGE = 10;
 
 	@Override
+	public String getName() {
+		return "second example search result provider";
+	}
+
+	@Override
 	public Single<SearchProviderResult> getResults(String query, int startIndex, SearchOptions options) {
 
 		if (query == null) {

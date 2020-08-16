@@ -80,7 +80,21 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 
 	@Override
 	public Link createLink() {
+
 		return request.createLinkTo(
-				ctrl -> ctrl.getResultPage(query, options.delayMs, options.skipFirst, options.skipSecond, startIndex));
+				ctrl -> ctrl.getResultPage(query, options.delayMs, options.skipFirst, options.skipSecond, startIndex))
+				.setTitle(getLinkTitle());
+	}
+
+	private String getLinkTitle() {
+
+		if (query == null) {
+			return "Execute a search query using with multiple search services and merge the result";
+		}
+
+		int pageIndex = startIndex / RESULTS_PER_PAGE;
+		int lastIndex = startIndex + RESULTS_PER_PAGE - 1;
+
+		return "Page " + pageIndex + " with results " + startIndex + "-" + lastIndex + " from the meta search service";
 	}
 }
