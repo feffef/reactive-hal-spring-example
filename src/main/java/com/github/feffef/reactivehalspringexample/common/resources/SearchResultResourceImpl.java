@@ -1,5 +1,6 @@
 package com.github.feffef.reactivehalspringexample.common.resources;
 
+import com.github.feffef.reactivehalspringexample.api.search.ExternalHtmlResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 
@@ -21,5 +22,10 @@ public class SearchResultResourceImpl implements SearchResultResource, Embeddabl
 	@Override
 	public boolean isEmbedded() {
 		return true;
+	}
+
+	@Override
+	public ExternalHtmlResource getExternalLink() {
+		return new ExternalHtmlResourceImpl(result.url, "External link to the HTML resource");
 	}
 }

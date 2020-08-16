@@ -5,11 +5,12 @@ import io.wcm.caravan.reha.api.annotations.HalApiInterface;
 import io.wcm.caravan.reha.api.annotations.RelatedResource;
 import io.wcm.caravan.reha.api.annotations.TemplateVariable;
 import io.wcm.caravan.reha.api.annotations.TemplateVariables;
+import io.wcm.caravan.reha.api.relations.StandardRelations;
 
 @HalApiInterface
 public interface SearchEntryPointResource {
 
-	@RelatedResource(relation = "search:resultPage")
+	@RelatedResource(relation = StandardRelations.SEARCH)
 	Single<SearchResultPageResource> executeSearch(@TemplateVariable("query") String query,
 			@TemplateVariables SearchOptions options);
 }

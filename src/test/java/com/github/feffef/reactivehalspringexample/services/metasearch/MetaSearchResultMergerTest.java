@@ -7,9 +7,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.feffef.reactivehalspringexample.api.search.ExternalHtmlResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
+import com.github.feffef.reactivehalspringexample.common.resources.ExternalHtmlResourceImpl;
 import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearchResultMerger;
 import com.google.common.collect.Iterables;
 
@@ -18,6 +20,7 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.MaybeSubject;
 import io.reactivex.rxjava3.subscribers.TestSubscriber;
+import io.wcm.caravan.reha.api.resources.LinkableResource;
 
 public class MetaSearchResultMergerTest {
 
@@ -38,15 +41,7 @@ public class MetaSearchResultMergerTest {
 
 			int resultsOnPage = Math.min(resultsLeft, resultsPerPage);
 
-			return Observable.range(0, resultsOnPage).map(i -> new SearchResultResource() {
-
-				@Override
-				public SearchResult getProperties() {
-					SearchResult result = new SearchResult();
-					result.title = "Result #" + i;
-					return result;
-				}
-			});
+			return Observable.range(0, resultsOnPage).map(MockedSearchResultResource::new);
 		}
 
 		@Override
@@ -62,6 +57,27 @@ public class MetaSearchResultMergerTest {
 			throw new UnsupportedOperationException("not implemented");
 		}
 
+	}
+
+	class MockedSearchResultResource implements SearchResultResource {
+
+		private final int index;
+
+		public MockedSearchResultResource(int index) {
+			this.index = index;
+		}
+
+		@Override
+		public SearchResult getProperties() {
+			SearchResult result = new SearchResult();
+			result.title = "Result #" + index;
+			return result;
+		}
+
+		@Override
+		public ExternalHtmlResource getExternalLink() {
+			return new ExternalHtmlResourceImpl(null, null);
+		}
 	}
 
 	class AsyncResultMock {
@@ -123,15 +139,7 @@ public class MetaSearchResultMergerTest {
 			public Observable<SearchResultResource> getResults() {
 
 				return mock.flatMapObservable(
-						m -> Observable.range(0, m.numResultsOnPage).map(i -> new SearchResultResource() {
-
-							@Override
-							public SearchResult getProperties() {
-								SearchResult result = new SearchResult();
-								result.title = "Result #" + i;
-								return result;
-							}
-						}));
+						m -> Observable.range(0, m.numResultsOnPage).map(MockedSearchResultResource::new));
 			}
 
 			@Override
