@@ -42,16 +42,16 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 
 	private Flowable<SearchResult> getResultsOnPagePlusOneMore() {
 
-		Flowable<SearchResult> exampleResults = request.getAllExampleResults(query, options);
-		Flowable<SearchResult> googleResults = request.getSecondResults(query, options);
+		Flowable<SearchResult> firstResults = request.getResultsFromFirst(query, options);
+		Flowable<SearchResult> secondResults = request.getResultsFromSecond(query, options);
 
 		Flowable<SearchResult> mergedResults;
-		if (options.skipGoogle) {
-			mergedResults = exampleResults;
-		} else if (options.skipExample) {
-			mergedResults = googleResults;
+		if (options.skipSecond) {
+			mergedResults = firstResults;
+		} else if (options.skipFirst) {
+			mergedResults = secondResults;
 		} else {
-			mergedResults = request.merge(exampleResults, googleResults);
+			mergedResults = request.merge(firstResults, secondResults);
 		}
 
 		return mergedResults.skip(startIndex).take(RESULTS_PER_PAGE + 1);
@@ -90,7 +90,7 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 
 	@Override
 	public Link createLink() {
-		return request.createLinkTo(ctrl -> ctrl.getResultPage(query, options.delayMs, options.skipExample,
-				options.skipGoogle, startIndex));
+		return request.createLinkTo(
+				ctrl -> ctrl.getResultPage(query, options.delayMs, options.skipFirst, options.skipSecond, startIndex));
 	}
 }

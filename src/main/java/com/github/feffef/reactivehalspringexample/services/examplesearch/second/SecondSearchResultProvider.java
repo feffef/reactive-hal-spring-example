@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.services.examplesearch.services;
+package com.github.feffef.reactivehalspringexample.services.examplesearch.second;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,9 +17,9 @@ import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
 
 @Service
-public class ExampleSearchResultProvider implements SearchResultProvider {
+public class SecondSearchResultProvider implements SearchResultProvider {
 
-	public static final int MAX_RESULTS_PER_PAGE = 25;
+	public static final int MAX_RESULTS_PER_PAGE = 10;
 
 	@Override
 	public Single<SearchProviderResult> getResults(String query, int startIndex, SearchOptions options) {
@@ -59,14 +59,14 @@ public class ExampleSearchResultProvider implements SearchResultProvider {
 	SearchResult createResult(int index) {
 		SearchResult result = new SearchResult();
 
-		result.title = "Example Search Result #" + index;
+		result.title = "Second Search Result #" + index;
 		result.url = "https://www.example.com/result/" + index;
 
 		return result;
 	}
 
 	protected int getTotalNumResults(String query) {
-		return Math.abs(query.hashCode()) % 100;
+		return Math.abs(query.hashCode() * query.hashCode()) % 100;
 	}
 
 	@Override

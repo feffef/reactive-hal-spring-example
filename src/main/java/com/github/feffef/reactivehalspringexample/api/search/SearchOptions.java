@@ -4,7 +4,7 @@ public class SearchOptions {
 
 	public Integer delayMs;
 
-	public Boolean skipGoogle;
+	public Boolean skipFirst;
 
-	public Boolean skipExample;
+	public Boolean skipSecond;
 }

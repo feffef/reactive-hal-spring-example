@@ -1,6 +1,6 @@
 package com.github.feffef.reactivehalspringexample.services.examplesearch;
 
-import static com.github.feffef.reactivehalspringexample.services.examplesearch.services.ExampleSearchResultProvider.MAX_RESULTS_PER_PAGE;
+import static com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchResultProvider.MAX_RESULTS_PER_PAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -16,11 +16,13 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
+import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchController;
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.reha.api.client.HalApiClient;
 import io.wcm.caravan.reha.api.common.RequestMetricsCollector;
+import io.wcm.caravan.reha.spring.api.MockMvcJsonResourceLoader;
 
 @SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
 @ActiveProfiles(ExampleSearchIntegrationTest.PROFILE)
@@ -30,19 +32,17 @@ public class ExampleSearchIntegrationTest {
 
 	private static final String QUERY = "foo";
 
-	private static final String ENTRY_POINT_URI = "/search/example";
+	@Autowired
+	private MockMvcJsonResourceLoader resourceLoader;
 
 	@Autowired
-	private io.wcm.caravan.reha.spring.api.MockMvcJsonResourceLoader resourceLoader;
-
-	@Autowired
-	MockExampleSearchResultProvider exampleSearchResultProvider;
+	MockFirstSearchResultProvider firstSearchResultProvider;
 
 	private SearchEntryPointResource getEntryPoint() {
 
 		HalApiClient apiClient = HalApiClient.create(resourceLoader, RequestMetricsCollector.create());
 
-		return apiClient.getEntryPoint(ENTRY_POINT_URI, SearchEntryPointResource.class);
+		return apiClient.getEntryPoint(FirstSearchController.BASE_PATH, SearchEntryPointResource.class);
 	}
 
 	private Single<SearchResultPageResource> getFirstPage() {
@@ -56,7 +56,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void first_page_should_render_if_no_results_are_available() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 0);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, 0);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMap(this::getResultsOnPage).blockingGet();
 
@@ -66,7 +66,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void first_page_should_contain_max_number_of_results_per_apge() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMap(this::getResultsOnPage).blockingGet();
 
@@ -77,7 +77,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void first_page_should_have_no_prev_link() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
 
 		getFirstPage().flatMapMaybe(SearchResultPageResource::getPreviousPage).test().assertComplete().assertNoValues();
 	}
@@ -85,7 +85,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void first_page_should_have_no_next_link_if_all_results_fit_on_one_page() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE - 10);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE - 10);
 
 		getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage).test().assertComplete().assertNoValues();
 	}
@@ -93,7 +93,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void first_page_should_have_next_link_to_second_page() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage)
 				.flatMapSingle(this::getResultsOnPage).blockingGet();
@@ -105,7 +105,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void second_page_should_have_prev_link_to_first_page() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage)
 				.flatMap(SearchResultPageResource::getPreviousPage).flatMapSingle(this::getResultsOnPage).blockingGet();
@@ -117,7 +117,7 @@ public class ExampleSearchIntegrationTest {
 	@Test
 	public void second_page_should_have_next_link_to_third_page() throws Exception {
 
-		exampleSearchResultProvider.setNumResultsForQuery(QUERY, 2 * MAX_RESULTS_PER_PAGE + 1);
+		firstSearchResultProvider.setNumResultsForQuery(QUERY, 2 * MAX_RESULTS_PER_PAGE + 1);
 
 		List<SearchResult> resultsOnFirstPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage)
 				.flatMap(SearchResultPageResource::getNextPage).flatMapSingle(this::getResultsOnPage).blockingGet();

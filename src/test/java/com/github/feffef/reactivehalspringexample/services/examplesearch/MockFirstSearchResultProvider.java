@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.github.feffef.reactivehalspringexample.services.examplesearch.services.ExampleSearchResultProvider;
+import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchResultProvider;
 
 @Component
-@Primary // this service should *replace* the ExampleSearchResultProvider
+@Primary // this service should *replace* the FirstSearchResultProvider
 @Profile(ExampleSearchIntegrationTest.PROFILE) // ... in integration tests only
-public class MockExampleSearchResultProvider extends ExampleSearchResultProvider {
+public class MockFirstSearchResultProvider extends FirstSearchResultProvider {
 
 	private final Map<String, Integer> numResultsMap = new HashMap<>();
 

@@ -16,6 +16,9 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.services.common.context.AbstractExampleRequestContext;
+import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchController;
+import com.github.feffef.reactivehalspringexample.services.examplesearch.second.SecondSearchController;
+import com.github.feffef.reactivehalspringexample.services.googlesearch.controller.GoogleSearchController;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchResultPageResource;
@@ -45,13 +48,13 @@ public class MetaSearchController {
 
 	@GetMapping("/results")
 	public Mono<ResponseEntity<JsonNode>> getResultPage(@RequestParam String query,
-			@RequestParam(required = false) Integer delayMs, @RequestParam(required = false) Boolean skipExample,
-			@RequestParam(required = false) Boolean skipGoogle, @RequestParam Integer startIndex) {
+			@RequestParam(required = false) Integer delayMs, @RequestParam(required = false) Boolean skipFirst,
+			@RequestParam(required = false) Boolean skipSecond, @RequestParam Integer startIndex) {
 
 		SearchOptions options = new SearchOptions();
 		options.delayMs = defaultIfNull(delayMs, 0);
-		options.skipExample = defaultIfNull(skipExample, false);
-		options.skipGoogle = defaultIfNull(skipGoogle, false);
+		options.skipFirst = defaultIfNull(skipFirst, false);
+		options.skipSecond = defaultIfNull(skipSecond, false);
 
 		return renderResource(request -> new MetaSearchResultPageResource(request, query, options, startIndex));
 	}
@@ -69,7 +72,11 @@ public class MetaSearchController {
 			super(reha, MetaSearchController.class);
 		}
 
-		private SearchEntryPointResource getSearchEntryPoint(String entryPointUri) {
+		private SearchEntryPointResource getSearchEntryPoint(String basePath) {
+
+			String baseUri = "http://localhost:8080";
+
+			String entryPointUri = baseUri + basePath;
 
 			return getEntryPoint(entryPointUri, SearchEntryPointResource.class);
 		}
@@ -81,23 +88,23 @@ public class MetaSearchController {
 		}
 
 		@Override
-		public Flowable<SearchResult> getAllExampleResults(String query, SearchOptions metaOptions) {
+		public Flowable<SearchResult> getResultsFromFirst(String query, SearchOptions metaOptions) {
 
 			SearchOptions exampleOptions = new SearchOptions();
 			exampleOptions.delayMs = metaOptions.delayMs;
 
-			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint("http://localhost:8080/search/example");
+			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint(FirstSearchController.BASE_PATH);
 
 			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, exampleOptions);
 		}
 
 		@Override
-		public Flowable<SearchResult> getSecondResults(String query, SearchOptions metaOptions) {
+		public Flowable<SearchResult> getResultsFromSecond(String query, SearchOptions metaOptions) {
 
 			SearchOptions exampleOptions = new SearchOptions();
 			exampleOptions.delayMs = 500;
 
-			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint("http://localhost:8080/search/second");
+			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint(SecondSearchController.BASE_PATH);
 
 			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, exampleOptions);
 		}
@@ -107,7 +114,7 @@ public class MetaSearchController {
 
 			SearchOptions googleOptions = new SearchOptions();
 
-			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint("http://localhost:8080/search/google");
+			SearchEntryPointResource exampleEntryPoint = getSearchEntryPoint(GoogleSearchController.BASE_PATH);
 
 			return executeSearchAndGetResultsAsFlowable(exampleEntryPoint, query, googleOptions);
 		}

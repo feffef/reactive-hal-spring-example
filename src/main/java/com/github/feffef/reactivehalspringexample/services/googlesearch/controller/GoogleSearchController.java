@@ -25,8 +25,10 @@ import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/search/google")
+@RequestMapping(GoogleSearchController.BASE_PATH)
 public class GoogleSearchController implements SearchProviderController {
+
+	public static final String BASE_PATH = "/search/google";
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor requestProcessor;

@@ -17,11 +17,11 @@ public interface MetaSearchRequestContext {
 
 	Link createLinkTo(Function<MetaSearchController, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
-	Flowable<SearchResult> getAllExampleResults(String query, SearchOptions metaOptions);
+	Flowable<SearchResult> getResultsFromFirst(String query, SearchOptions metaOptions);
 
 	Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions);
 
 	Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults, Flowable<SearchResult> googleResults);
 
-	Flowable<SearchResult> getSecondResults(String query, SearchOptions metaOptions);
+	Flowable<SearchResult> getResultsFromSecond(String query, SearchOptions metaOptions);
 }

@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.services.secondesearch.controller;
+package com.github.feffef.reactivehalspringexample.services.examplesearch.first;
 
 import java.util.function.Function;
 
@@ -18,7 +18,6 @@ import com.github.feffef.reactivehalspringexample.services.common.controller.Sea
 import com.github.feffef.reactivehalspringexample.services.common.resources.SearchEntryPointResourceImpl;
 import com.github.feffef.reactivehalspringexample.services.common.resources.SearchResultPageResourceImpl;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
-import com.github.feffef.reactivehalspringexample.services.secondsearch.services.SecondSearchResultProvider;
 
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.reha.spring.api.SpringReactorReha;
@@ -26,14 +25,16 @@ import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/search/second")
-public class SecondSearchController implements SearchProviderController {
+@RequestMapping(FirstSearchController.BASE_PATH)
+public class FirstSearchController implements SearchProviderController {
+
+	public final static String BASE_PATH = "/search/first";
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor requestProcessor;
 
 	@Autowired
-	private SecondSearchResultProvider searchService;
+	private FirstSearchResultProvider searchService;
 
 	@Override
 	@GetMapping()
@@ -63,7 +64,7 @@ public class SecondSearchController implements SearchProviderController {
 			implements SearchProviderRequestContext {
 
 		RequestContext(SpringReactorReha reha) {
-			super(reha, SecondSearchController.class);
+			super(reha, FirstSearchController.class);
 		}
 
 		@Override

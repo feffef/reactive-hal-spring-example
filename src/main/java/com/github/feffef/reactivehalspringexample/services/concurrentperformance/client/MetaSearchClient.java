@@ -20,7 +20,7 @@ public class MetaSearchClient {
 
 		SearchOptions options = new SearchOptions();
 		options.delayMs = delayMs;
-		options.skipGoogle = true;
+		options.skipSecond = true;
 
 		return searchEntryPoint.executeSearch(query, options).flatMapObservable(SearchResultPageResource::getResults)
 				.map(SearchResultResource::getProperties);
