@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
-import com.github.feffef.reactivehalspringexample.common.AbstractSpringRehaRequestContext;
-import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
+import com.github.feffef.reactivehalspringexample.services.common.context.AbstractExampleRequestContext;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.client.MetaSearchClient;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.context.ConcurrentPerformanceRequestContext;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.resource.ConcurrentPerformanceEntryPointResource;
 import com.github.feffef.reactivehalspringexample.services.concurrentperformance.resource.ConcurrentPerformanceResultResource;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
+import io.wcm.caravan.reha.spring.api.SpringReactorReha;
+import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 public class ConcurrentPerformanceController {
 
 	@Autowired
-	private HalApiSupport halSupport;
+	private SpringRehaAsyncRequestProcessor springReha;
 
 	@GetMapping()
 	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
@@ -47,15 +47,15 @@ public class ConcurrentPerformanceController {
 	Mono<ResponseEntity<JsonNode>> renderResource(
 			Function<ConcurrentPerformanceRequestContext, LinkableResource> resourceConstructor) {
 
-		return halSupport.processRequest(RequestContext::new, resourceConstructor);
+		return springReha.processRequest(RequestContext::new, resourceConstructor);
 	}
 
-	class RequestContext extends AbstractSpringRehaRequestContext<ConcurrentPerformanceController>
+	class RequestContext extends AbstractExampleRequestContext<ConcurrentPerformanceController>
 			implements ConcurrentPerformanceRequestContext {
 
 		private final MetaSearchClient metaSearchClient;
 
-		RequestContext(Reha reha) {
+		RequestContext(SpringReactorReha reha) {
 			super(reha, ConcurrentPerformanceController.class);
 
 			metaSearchClient = new MetaSearchClient(

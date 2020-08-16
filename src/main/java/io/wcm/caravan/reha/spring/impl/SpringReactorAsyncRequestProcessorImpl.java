@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.common;
+package io.wcm.caravan.reha.spring.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,6 +8,8 @@ import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.CacheControl;
@@ -24,17 +26,21 @@ import io.wcm.caravan.reha.api.RehaBuilder;
 import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
+import io.wcm.caravan.reha.spring.api.SpringReactorReha;
+import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @Component
 @RequestScope
-public class HalApiSupport {
+public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRequestProcessor {
+
+	private static final Logger log = LoggerFactory.getLogger(SpringReactorAsyncRequestProcessorImpl.class);
 
 	private final URI requestUri;
 
 	private final JsonResourceLoader jsonLoader;
 
-	public HalApiSupport(@Autowired HttpServletRequest httpRequest,
+	public SpringReactorAsyncRequestProcessorImpl(@Autowired HttpServletRequest httpRequest,
 			@Autowired @Qualifier("cachingJsonResourceLoader") JsonResourceLoader jsonLoader) {
 
 		this.requestUri = getRequestURI(httpRequest);
@@ -42,13 +48,16 @@ public class HalApiSupport {
 		this.jsonLoader = jsonLoader;
 	}
 
+	@Override
 	public <RequestContextType> Mono<ResponseEntity<JsonNode>> processRequest(
-			Function<Reha, RequestContextType> requestContextConstructor,
+			Function<SpringReactorReha, RequestContextType> requestContextConstructor,
 			Function<RequestContextType, LinkableResource> resourceImplConstructor) {
 
 		Reha reha = RehaBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
 
-		RequestContextType requestContext = requestContextConstructor.apply(reha);
+		SpringReactorReha springReha = new SpringReactorRehaImpl(reha);
+
+		RequestContextType requestContext = requestContextConstructor.apply(springReha);
 
 		LinkableResource resourceImpl = resourceImplConstructor.apply(requestContext);
 
@@ -57,6 +66,11 @@ public class HalApiSupport {
 
 	private static URI getRequestURI(HttpServletRequest httpRequest) {
 		String requestUrl = httpRequest.getRequestURL().toString();
+		String query = httpRequest.getQueryString();
+		if (query != null) {
+			requestUrl += "?" + query;
+		}
+		log.info("Incoming request  | uri={}", requestUrl);
 		try {
 			return new URI(requestUrl);
 		} catch (URISyntaxException ex) {
@@ -85,6 +99,9 @@ public class HalApiSupport {
 			builder.cacheControl(CacheControl.maxAge(halResponse.getMaxAge(), TimeUnit.SECONDS));
 		}
 
+		log.info("Outgoing response | uri={}", requestUri);
+
 		return builder.body(halResponse.getBody().getModel());
 	}
+
 }

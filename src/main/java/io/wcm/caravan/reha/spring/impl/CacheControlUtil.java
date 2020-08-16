@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.common;
+package io.wcm.caravan.reha.spring.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,7 +1,5 @@
 package com.github.feffef.reactivehalspringexample.services.examplesearch.controller;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-
 import java.util.function.Function;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -14,8 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
-import com.github.feffef.reactivehalspringexample.common.AbstractSpringRehaRequestContext;
-import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
+import com.github.feffef.reactivehalspringexample.services.common.context.AbstractExampleRequestContext;
 import com.github.feffef.reactivehalspringexample.services.common.context.SearchProviderRequestContext;
 import com.github.feffef.reactivehalspringexample.services.common.controller.SearchProviderController;
 import com.github.feffef.reactivehalspringexample.services.common.resources.SearchEntryPointResourceImpl;
@@ -23,8 +20,9 @@ import com.github.feffef.reactivehalspringexample.services.common.resources.Sear
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
 import com.github.feffef.reactivehalspringexample.services.examplesearch.services.ExampleSearchResultProvider;
 
-import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
+import io.wcm.caravan.reha.spring.api.SpringReactorReha;
+import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -32,7 +30,7 @@ import reactor.core.publisher.Mono;
 public class ExampleSearchController implements SearchProviderController {
 
 	@Autowired
-	private HalApiSupport halSupport;
+	private SpringRehaAsyncRequestProcessor requestProcessor;
 
 	@Autowired
 	private ExampleSearchResultProvider searchService;
@@ -51,21 +49,20 @@ public class ExampleSearchController implements SearchProviderController {
 
 		SearchOptions options = new SearchOptions();
 		options.delayMs = ObjectUtils.defaultIfNull(delayMs, 0);
-		
-		return renderResource(
-				request -> new SearchResultPageResourceImpl(request, query, options, startIndex));
+
+		return renderResource(request -> new SearchResultPageResourceImpl(request, query, options, startIndex));
 	}
 
 	Mono<ResponseEntity<JsonNode>> renderResource(
 			Function<SearchProviderRequestContext, LinkableResource> resourceConstructor) {
 
-		return halSupport.processRequest(RequestContext::new, resourceConstructor);
+		return requestProcessor.processRequest(RequestContext::new, resourceConstructor);
 	}
 
-	class RequestContext extends AbstractSpringRehaRequestContext<SearchProviderController>
+	class RequestContext extends AbstractExampleRequestContext<SearchProviderController>
 			implements SearchProviderRequestContext {
 
-		RequestContext(Reha reha) {
+		RequestContext(SpringReactorReha reha) {
 			super(reha, ExampleSearchController.class);
 		}
 

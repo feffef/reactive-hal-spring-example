@@ -1,7 +1,5 @@
 package com.github.feffef.reactivehalspringexample.services.common.resources;
 
-import java.util.concurrent.TimeUnit;
-
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
@@ -41,7 +39,8 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 	@Override
 	public Observable<SearchResultResource> getResults() {
 
-		return pageResult.flatMapObservable(r -> Observable.fromIterable(r.getResultsOnPage())).map(SearchResultResourceImpl::new);
+		return pageResult.flatMapObservable(r -> Observable.fromIterable(r.getResultsOnPage()))
+				.map(SearchResultResourceImpl::new);
 	}
 
 	@Override

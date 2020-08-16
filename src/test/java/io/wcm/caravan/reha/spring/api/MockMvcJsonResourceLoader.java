@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.common;
+package io.wcm.caravan.reha.spring.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
@@ -28,6 +28,7 @@ import io.wcm.caravan.hal.resource.HalResource;
 import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
 import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
+import io.wcm.caravan.reha.spring.impl.CacheControlUtil;
 
 @Component
 public class MockMvcJsonResourceLoader implements JsonResourceLoader {

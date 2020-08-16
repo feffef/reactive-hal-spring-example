@@ -15,16 +15,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
-import com.github.feffef.reactivehalspringexample.common.AbstractSpringRehaRequestContext;
-import com.github.feffef.reactivehalspringexample.common.HalApiSupport;
+import com.github.feffef.reactivehalspringexample.services.common.context.AbstractExampleRequestContext;
 import com.github.feffef.reactivehalspringexample.services.metasearch.context.MetaSearchRequestContext;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.resource.MetaSearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.services.metasearch.services.MetaSearchResultMerger;
 
 import io.reactivex.rxjava3.core.Flowable;
-import io.wcm.caravan.reha.api.Reha;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
+import io.wcm.caravan.reha.spring.api.SpringReactorReha;
+import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono;
 public class MetaSearchController {
 
 	@Autowired
-	private HalApiSupport halSupport;
+	private SpringRehaAsyncRequestProcessor requestProcessor;
 
 	@Autowired
 	private MetaSearchResultMerger merger;
@@ -59,13 +59,13 @@ public class MetaSearchController {
 	Mono<ResponseEntity<JsonNode>> renderResource(
 			Function<MetaSearchRequestContext, LinkableResource> resourceConstructor) {
 
-		return halSupport.processRequest(RequestContext::new, resourceConstructor);
+		return requestProcessor.processRequest(RequestContext::new, resourceConstructor);
 	}
 
-	class RequestContext extends AbstractSpringRehaRequestContext<MetaSearchController>
+	class RequestContext extends AbstractExampleRequestContext<MetaSearchController>
 			implements MetaSearchRequestContext {
 
-		RequestContext(Reha reha) {
+		RequestContext(SpringReactorReha reha) {
 			super(reha, MetaSearchController.class);
 		}
 
@@ -116,9 +116,10 @@ public class MetaSearchController {
 		public Flowable<SearchResult> merge(Flowable<SearchResult> exampleResults,
 				Flowable<SearchResult> googleResults) {
 
-			Flowable<Flowable<SearchResult>> zip = exampleResults.rebatchRequests(2).zipWith(googleResults.rebatchRequests(2), (r1, r2) -> {
-				return Flowable.fromArray(r1, r2);
-			});
+			Flowable<Flowable<SearchResult>> zip = exampleResults.rebatchRequests(2)
+					.zipWith(googleResults.rebatchRequests(2), (r1, r2) -> {
+						return Flowable.fromArray(r1, r2);
+					});
 			return zip.flatMap(z -> z);
 		}
 	}

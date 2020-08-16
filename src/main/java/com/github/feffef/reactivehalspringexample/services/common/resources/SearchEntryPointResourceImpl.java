@@ -21,7 +21,7 @@ public class SearchEntryPointResourceImpl implements SearchEntryPointResource, L
 	public Single<SearchResultPageResource> executeSearch(String query, SearchOptions options) {
 
 		SearchOptions defaultOptions = request.getSearchResultProvider().getDefaultOptions();
-		
+
 		return Single.just(new SearchResultPageResourceImpl(request, query, defaultOptions, 0));
 	}
 

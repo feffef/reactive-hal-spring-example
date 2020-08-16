@@ -16,7 +16,6 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
-import com.github.feffef.reactivehalspringexample.common.MockMvcJsonResourceLoader;
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Single;
@@ -34,7 +33,7 @@ public class ExampleSearchIntegrationTest {
 	private static final String ENTRY_POINT_URI = "/search/example";
 
 	@Autowired
-	private MockMvcJsonResourceLoader resourceLoader;
+	private io.wcm.caravan.reha.spring.api.MockMvcJsonResourceLoader resourceLoader;
 
 	@Autowired
 	MockExampleSearchResultProvider exampleSearchResultProvider;

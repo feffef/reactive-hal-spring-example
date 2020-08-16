@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
-import com.github.feffef.reactivehalspringexample.common.WebClientJsonResourceLoader;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchProviderResult;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
 
@@ -22,6 +21,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.reha.api.common.HalResponse;
 import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
 import io.wcm.caravan.reha.api.exceptions.HalApiServerException;
+import io.wcm.caravan.reha.spring.impl.WebClientJsonResourceLoader;
 
 @Service
 public class GoogleSearchResultProvider implements SearchResultProvider {

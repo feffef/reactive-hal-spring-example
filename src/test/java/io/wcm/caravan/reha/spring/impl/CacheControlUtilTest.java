@@ -1,6 +1,6 @@
-package com.github.feffef.reactivehalspringexample.common;
+package io.wcm.caravan.reha.spring.impl;
 
-import static com.github.feffef.reactivehalspringexample.common.CacheControlUtil.parseMaxAge;
+import static io.wcm.caravan.reha.spring.impl.CacheControlUtil.parseMaxAge;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,19 @@
 package com.github.feffef.reactivehalspringexample.services.common.context;
 
-import com.github.feffef.reactivehalspringexample.common.SpringRehaRequestContext;
+import java.util.function.Function;
+
+import org.springframework.http.ResponseEntity;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.services.common.controller.SearchProviderController;
 import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
 
-public interface SearchProviderRequestContext extends SpringRehaRequestContext<SearchProviderController> {
+import io.wcm.caravan.hal.resource.Link;
+import reactor.core.publisher.Mono;
+
+public interface SearchProviderRequestContext {
+
+	Link createLinkTo(Function<SearchProviderController, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
 	SearchResultProvider getSearchResultProvider();
 }

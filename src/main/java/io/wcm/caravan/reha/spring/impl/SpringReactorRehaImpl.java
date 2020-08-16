@@ -1,4 +1,4 @@
-package com.github.feffef.reactivehalspringexample.common;
+package io.wcm.caravan.reha.spring.impl;
 
 import java.time.Duration;
 import java.util.function.Function;
@@ -10,20 +10,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import io.wcm.caravan.hal.resource.Link;
 import io.wcm.caravan.reha.api.Reha;
+import io.wcm.caravan.reha.spring.api.SpringReactorReha;
 import reactor.core.publisher.Mono;
 
-public abstract class AbstractSpringRehaRequestContext<ControllerType>
-		implements SpringRehaRequestContext<ControllerType> {
+final class SpringReactorRehaImpl implements SpringReactorReha {
 
 	private final Reha reha;
 
-	private final Class<? extends ControllerType> controllerClass;
-
-	public AbstractSpringRehaRequestContext(Reha reha, Class<? extends ControllerType> controllerClass) {
+	SpringReactorRehaImpl(Reha reha) {
 		this.reha = reha;
-		this.controllerClass = controllerClass;
 	}
 
+	@Override
 	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
 		return reha.getEntryPoint(uri, halApiInterface);
 	}
@@ -34,7 +32,8 @@ public abstract class AbstractSpringRehaRequestContext<ControllerType>
 	}
 
 	@Override
-	public Link createLinkTo(Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall) {
+	public <ControllerType> Link createLinkTo(Class<? extends ControllerType> controllerClass,
+			Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall) {
 
 		ControllerType controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
 
