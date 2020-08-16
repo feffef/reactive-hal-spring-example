@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
-import com.github.feffef.reactivehalspringexample.services.common.context.AbstractExampleRequestContext;
-import com.github.feffef.reactivehalspringexample.services.common.context.SearchProviderRequestContext;
-import com.github.feffef.reactivehalspringexample.services.common.controller.SearchProviderController;
-import com.github.feffef.reactivehalspringexample.services.common.resources.SearchEntryPointResourceImpl;
-import com.github.feffef.reactivehalspringexample.services.common.resources.SearchResultPageResourceImpl;
-import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
+import com.github.feffef.reactivehalspringexample.common.context.AbstractExampleRequestContext;
+import com.github.feffef.reactivehalspringexample.common.context.SearchProviderRequestContext;
+import com.github.feffef.reactivehalspringexample.common.controller.SearchProviderController;
+import com.github.feffef.reactivehalspringexample.common.resources.SearchEntryPointResourceImpl;
+import com.github.feffef.reactivehalspringexample.common.resources.SearchResultPageResourceImpl;
+import com.github.feffef.reactivehalspringexample.common.services.SearchResultProvider;
 
 import io.wcm.caravan.reha.api.resources.LinkableResource;
 import io.wcm.caravan.reha.spring.api.SpringReactorReha;

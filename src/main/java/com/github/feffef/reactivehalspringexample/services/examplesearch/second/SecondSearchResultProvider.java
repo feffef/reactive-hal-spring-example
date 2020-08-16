@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
-import com.github.feffef.reactivehalspringexample.services.common.services.SearchProviderResult;
-import com.github.feffef.reactivehalspringexample.services.common.services.SearchResultProvider;
+import com.github.feffef.reactivehalspringexample.common.services.SearchProviderResult;
+import com.github.feffef.reactivehalspringexample.common.services.SearchResultProvider;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Single;

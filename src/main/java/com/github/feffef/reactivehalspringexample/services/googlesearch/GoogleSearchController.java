@@ -1,8 +1,7 @@
-package com.github.feffef.reactivehalspringexample.services.examplesearch.second;
+package com.github.feffef.reactivehalspringexample.services.googlesearch;
 
 import java.util.function.Function;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +24,16 @@ import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping(SecondSearchController.BASE_PATH)
-public class SecondSearchController implements SearchProviderController {
+@RequestMapping(GoogleSearchController.BASE_PATH)
+public class GoogleSearchController implements SearchProviderController {
 
-	public static final String BASE_PATH = "/search/second";
+	public static final String BASE_PATH = "/search/google";
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor requestProcessor;
 
 	@Autowired
-	private SecondSearchResultProvider searchService;
+	private GoogleSearchResultProvider googleResultProvider;
 
 	@Override
 	@GetMapping()
@@ -49,7 +48,7 @@ public class SecondSearchController implements SearchProviderController {
 			@RequestParam("delayMs") Integer delayMs, @RequestParam("startIndex") Integer startIndex) {
 
 		SearchOptions options = new SearchOptions();
-		options.delayMs = ObjectUtils.defaultIfNull(delayMs, 0);
+		options.delayMs = delayMs;
 
 		return renderResource(request -> new SearchResultPageResourceImpl(request, query, options, startIndex));
 	}
@@ -64,12 +63,12 @@ public class SecondSearchController implements SearchProviderController {
 			implements SearchProviderRequestContext {
 
 		RequestContext(SpringReactorReha reha) {
-			super(reha, SecondSearchController.class);
+			super(reha, GoogleSearchController.class);
 		}
 
 		@Override
 		public SearchResultProvider getSearchResultProvider() {
-			return searchService;
+			return googleResultProvider;
 		}
 
 	}
