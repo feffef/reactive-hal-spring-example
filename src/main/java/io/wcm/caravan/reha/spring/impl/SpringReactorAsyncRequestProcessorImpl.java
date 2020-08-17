@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -37,13 +38,16 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 	private static final Logger log = LoggerFactory.getLogger(SpringReactorAsyncRequestProcessorImpl.class);
 
 	private final URI requestUri;
+	private final ServletWebRequest webRequest;
 
 	private final JsonResourceLoader jsonLoader;
 
 	public SpringReactorAsyncRequestProcessorImpl(@Autowired HttpServletRequest httpRequest,
+			@Autowired ServletWebRequest webRequest,
 			@Autowired @Qualifier("cachingJsonResourceLoader") JsonResourceLoader jsonLoader) {
 
 		this.requestUri = getRequestURI(httpRequest);
+		this.webRequest = webRequest;
 
 		this.jsonLoader = jsonLoader;
 	}
@@ -55,7 +59,7 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 
 		Reha reha = RehaBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
 
-		SpringReactorReha springReha = new SpringReactorRehaImpl(reha);
+		SpringReactorReha springReha = new SpringReactorRehaImpl(reha, webRequest);
 
 		RequestContextType requestContext = requestContextConstructor.apply(springReha);
 

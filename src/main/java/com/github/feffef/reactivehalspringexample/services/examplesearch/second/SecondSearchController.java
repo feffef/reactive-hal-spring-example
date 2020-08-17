@@ -1,5 +1,7 @@
 package com.github.feffef.reactivehalspringexample.services.examplesearch.second;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.function.Function;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -38,9 +40,9 @@ public class SecondSearchController implements SearchProviderController {
 
 	@Override
 	@GetMapping()
-	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
+	public Mono<ResponseEntity<JsonNode>> getEntryPoint(@RequestParam(required = false) String memento) {
 
-		return renderResource(request -> new SearchEntryPointResourceImpl(request));
+		return renderResource(request -> new SearchEntryPointResourceImpl(request, defaultIfNull(memento, "")));
 	}
 
 	@Override

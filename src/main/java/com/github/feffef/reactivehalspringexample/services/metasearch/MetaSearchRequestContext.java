@@ -17,4 +17,5 @@ public interface MetaSearchRequestContext {
 	Link createLinkTo(Function<MetaSearchController, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
 	Flowable<SearchResult> fetchAndMergeResults(String query, SearchOptions options);
+
 }

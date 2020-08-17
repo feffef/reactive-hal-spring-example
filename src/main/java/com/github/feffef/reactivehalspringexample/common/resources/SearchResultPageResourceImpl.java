@@ -44,6 +44,10 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 				.map(SearchResultResourceImpl::new);
 	}
 
+	private Maybe<SearchResultPageResource> linkToPage(int fromIndex) {
+		return Maybe.just(new SearchResultPageResourceImpl(request, query, options, fromIndex));
+	}
+
 	@Override
 	public Maybe<SearchResultPageResource> getNextPage() {
 
@@ -65,10 +69,6 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 		}
 
 		return Maybe.empty();
-	}
-
-	private Maybe<SearchResultPageResource> linkToPage(int fromIndex) {
-		return Maybe.just(new SearchResultPageResourceImpl(request, query, options, fromIndex));
 	}
 
 	@Override
@@ -93,4 +93,5 @@ public class SearchResultPageResourceImpl implements SearchResultPageResource, L
 		return "Page " + pageIndex + " with results " + startIndex + "-" + lastIndex + " from the " + provider.getName()
 				+ " service";
 	}
+
 }

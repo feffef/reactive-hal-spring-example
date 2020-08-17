@@ -64,12 +64,16 @@ public class MetaSearchController {
 		RequestContext(SpringReactorReha reha) {
 			super(reha, MetaSearchController.class);
 
-			this.provider = new MetaSearchResultProvider(reha);
+			this.provider = new MetaSearchResultProvider(this);
 		}
 
 		@Override
 		public Flowable<SearchResult> fetchAndMergeResults(String query, SearchOptions options) {
+
+			ensureThatMementoIsPresent();
+
 			return provider.getMetaSearchResults(query, options);
 		}
+
 	}
 }

@@ -1,5 +1,7 @@
 package com.github.feffef.reactivehalspringexample.services.googlesearch;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +39,9 @@ public class GoogleSearchController implements SearchProviderController {
 
 	@Override
 	@GetMapping()
-	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
+	public Mono<ResponseEntity<JsonNode>> getEntryPoint(@RequestParam(required = false) String memento) {
 
-		return renderResource(request -> new SearchEntryPointResourceImpl(request));
+		return renderResource(request -> new SearchEntryPointResourceImpl(request, defaultIfNull(memento, "")));
 	}
 
 	@Override

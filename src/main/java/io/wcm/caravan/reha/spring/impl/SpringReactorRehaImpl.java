@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -16,9 +17,16 @@ import reactor.core.publisher.Mono;
 final class SpringReactorRehaImpl implements SpringReactorReha {
 
 	private final Reha reha;
+	private final ServletWebRequest webRequest;
 
-	SpringReactorRehaImpl(Reha reha) {
+	SpringReactorRehaImpl(Reha reha, ServletWebRequest webRequest) {
 		this.reha = reha;
+		this.webRequest = webRequest;
+	}
+
+	@Override
+	public ServletWebRequest getWebRequest() {
+		return webRequest;
 	}
 
 	@Override

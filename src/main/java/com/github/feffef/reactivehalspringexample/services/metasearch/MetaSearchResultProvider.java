@@ -3,22 +3,22 @@ package com.github.feffef.reactivehalspringexample.services.metasearch;
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
+import com.github.feffef.reactivehalspringexample.common.context.AbstractExampleRequestContext;
 import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchController;
 import com.github.feffef.reactivehalspringexample.services.examplesearch.second.SecondSearchController;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.GoogleSearchController;
+import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearchController.RequestContext;
 
 import io.reactivex.rxjava3.core.Flowable;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
 
 public class MetaSearchResultProvider {
 
-	private final SpringReactorReha reha;
+	private final RequestContext request;
 
 	private final MetaSearchResultMerger merger = new MetaSearchResultMerger();
 
-	public MetaSearchResultProvider(SpringReactorReha reha) {
-
-		this.reha = reha;
+	public MetaSearchResultProvider(RequestContext context) {
+		this.request = context;
 	}
 
 	public Flowable<SearchResult> getMetaSearchResults(String query, SearchOptions options) {
@@ -65,10 +65,17 @@ public class MetaSearchResultProvider {
 			SearchOptions options) {
 
 		String entryPointUri = "http://localhost:8080" + basePath;
+		String immutableEntryPointuri = appendMementoParam(entryPointUri);
 
-		SearchEntryPointResource searchEntryPoint = reha.getEntryPoint(entryPointUri, SearchEntryPointResource.class);
+		SearchEntryPointResource searchEntryPoint = request.getEntryPoint(immutableEntryPointuri,
+				SearchEntryPointResource.class);
 
 		return searchEntryPoint.executeSearch(query, options).flatMapPublisher(merger::createAutoPagingFlowable);
 	}
 
+	private String appendMementoParam(String entryPointUri) {
+
+		return entryPointUri + "?" + AbstractExampleRequestContext.MEMENTO_PARAM_NAME + "="
+				+ request.getMemento().get();
+	}
 }

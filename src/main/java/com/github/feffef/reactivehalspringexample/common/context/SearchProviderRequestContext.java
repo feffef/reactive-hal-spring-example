@@ -1,5 +1,6 @@
 package com.github.feffef.reactivehalspringexample.common.context;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.http.ResponseEntity;
@@ -16,4 +17,6 @@ public interface SearchProviderRequestContext {
 	Link createLinkTo(Function<SearchProviderController, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
 	SearchResultProvider getSearchResultProvider();
+
+	Optional<String> getMemento();
 }

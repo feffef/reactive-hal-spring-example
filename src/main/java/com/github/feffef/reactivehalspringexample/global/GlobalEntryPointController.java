@@ -60,11 +60,11 @@ public class GlobalEntryPointController {
 		public List<LinkableResource> getSearchServiceEntryPoints() {
 
 			return ImmutableList.of(
-					linkTo(FirstSearchController.class, FirstSearchController::getEntryPoint,
+					linkTo(FirstSearchController.class, ctrl -> ctrl.getEntryPoint(""),
 							"The first example search service, which returns results after a configurable delay"),
-					linkTo(SecondSearchController.class, SecondSearchController::getEntryPoint,
+					linkTo(SecondSearchController.class, ctrl -> ctrl.getEntryPoint(""),
 							"The second example search service, which returns results after a fixed delay"),
-					linkTo(GoogleSearchController.class, GoogleSearchController::getEntryPoint,
+					linkTo(GoogleSearchController.class, ctrl -> ctrl.getEntryPoint(""),
 							"A service fetching wikipedia results from a Google custom search engine"));
 		}
 

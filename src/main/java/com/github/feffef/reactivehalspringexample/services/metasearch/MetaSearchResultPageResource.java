@@ -97,4 +97,5 @@ public class MetaSearchResultPageResource implements SearchResultPageResource, L
 
 		return "Page " + pageIndex + " with results " + startIndex + "-" + lastIndex + " from the meta search service";
 	}
+
 }

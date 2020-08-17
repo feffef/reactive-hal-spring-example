@@ -4,6 +4,7 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointRes
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.hal.resource.Link;
 import io.wcm.caravan.reha.api.resources.LinkableResource;
@@ -20,6 +21,12 @@ public class MetaSearchEntryPointResource implements SearchEntryPointResource, L
 	public Single<SearchResultPageResource> executeSearch(String query, SearchOptions options) {
 
 		return Single.just(new MetaSearchResultPageResource(request, query, options, 0));
+	}
+
+	@Override
+	public Maybe<SearchEntryPointResource> getImmutableEntryPoint(String memento) {
+		// this is only required/supported for the individual search services
+		return Maybe.empty();
 	}
 
 	@Override

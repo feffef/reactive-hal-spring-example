@@ -12,7 +12,6 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.common.resources.ExternalHtmlResourceImpl;
-import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearchResultMerger;
 import com.google.common.collect.Iterables;
 
 import io.reactivex.rxjava3.core.Flowable;
@@ -20,7 +19,6 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.MaybeSubject;
 import io.reactivex.rxjava3.subscribers.TestSubscriber;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
 
 public class MetaSearchResultMergerTest {
 
@@ -156,7 +154,6 @@ public class MetaSearchResultMergerTest {
 			public Maybe<SearchResultPageResource> getPreviousPage() {
 				throw new UnsupportedOperationException("not implemented");
 			}
-
 		}
 
 	}

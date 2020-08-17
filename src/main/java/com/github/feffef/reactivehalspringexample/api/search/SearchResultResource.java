@@ -10,7 +10,7 @@ public interface SearchResultResource {
 
 	@ResourceState
 	SearchResult getProperties();
-	
+
 	@RelatedResource(relation = StandardRelations.EXTERNAL)
 	ExternalHtmlResource getExternalLink();
 }
