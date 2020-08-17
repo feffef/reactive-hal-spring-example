@@ -68,7 +68,7 @@ public class WebClientJsonResourceLoader implements JsonResourceLoader {
 		String cacheControl = responseEntity.getHeaders().getCacheControl();
 		Integer maxAge = CacheControlUtil.parseMaxAge(cacheControl);
 		if (maxAge != null) {
-			response.withMaxAge(maxAge);
+			response = response.withMaxAge(maxAge);
 		}
 
 		return response;
