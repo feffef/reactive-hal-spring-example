@@ -31,6 +31,9 @@ public class MetaSearchController {
 	@Autowired
 	private SpringRehaAsyncRequestProcessor requestProcessor;
 
+	@Autowired
+	private MetaSearchResultProvider resultProvider;
+
 	@GetMapping()
 	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
 
@@ -59,12 +62,8 @@ public class MetaSearchController {
 	class RequestContext extends AbstractExampleRequestContext<MetaSearchController>
 			implements MetaSearchRequestContext {
 
-		private final MetaSearchResultProvider provider;
-
 		RequestContext(SpringReactorReha reha) {
 			super(reha, MetaSearchController.class);
-
-			this.provider = new MetaSearchResultProvider(this);
 		}
 
 		@Override
@@ -72,8 +71,7 @@ public class MetaSearchController {
 
 			ensureThatQueryTimestampIsPresent();
 
-			return provider.getMetaSearchResults(query, options);
+			return resultProvider.getMetaSearchResults(this, query, options);
 		}
-
 	}
 }

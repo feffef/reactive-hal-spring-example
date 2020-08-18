@@ -72,7 +72,7 @@ public abstract class AbstractExampleRequestContext<ControllerType> {
 
 	private Optional<String> getQueryTimestampFromRequestUrl() {
 
-		String timestamp = reha.getWebRequest().getParameter(QUERY_TIMESTAMP_PARAM);
+		String timestamp = reha.getRequest().getParameter(QUERY_TIMESTAMP_PARAM);
 
 		if (StringUtils.isBlank(timestamp)) {
 			return Optional.empty();

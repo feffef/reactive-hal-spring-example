@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,14 +38,18 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 
 	private static final Logger log = LoggerFactory.getLogger(SpringReactorAsyncRequestProcessorImpl.class);
 
+	private final Environment environment;
+
 	private final URI requestUri;
 	private final ServletWebRequest webRequest;
 
 	private final JsonResourceLoader jsonLoader;
 
-	public SpringReactorAsyncRequestProcessorImpl(@Autowired HttpServletRequest httpRequest,
-			@Autowired ServletWebRequest webRequest,
+	public SpringReactorAsyncRequestProcessorImpl(@Autowired Environment environment,
+			@Autowired HttpServletRequest httpRequest, @Autowired ServletWebRequest webRequest,
 			@Autowired @Qualifier("cachingJsonResourceLoader") JsonResourceLoader jsonLoader) {
+
+		this.environment = environment;
 
 		this.requestUri = getRequestURI(httpRequest);
 		this.webRequest = webRequest;
@@ -59,7 +64,7 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 
 		Reha reha = RehaBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
 
-		SpringReactorReha springReha = new SpringReactorRehaImpl(reha, webRequest);
+		SpringReactorReha springReha = new SpringReactorRehaImpl(reha, webRequest, environment);
 
 		RequestContextType requestContext = requestContextConstructor.apply(springReha);
 
@@ -74,7 +79,7 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 		if (query != null) {
 			requestUrl += "?" + query;
 		}
-		log.info("Incoming request  | uri={}", requestUrl);
+		log.debug("Incoming request  | uri={}", requestUrl);
 		try {
 			return new URI(requestUrl);
 		} catch (URISyntaxException ex) {
@@ -103,7 +108,7 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 			builder.cacheControl(CacheControl.maxAge(halResponse.getMaxAge(), TimeUnit.SECONDS));
 		}
 
-		log.info("Outgoing response | uri={}", requestUri);
+		log.debug("Outgoing response | uri={}", requestUri);
 
 		return builder.body(halResponse.getBody().getModel());
 	}

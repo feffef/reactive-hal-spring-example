@@ -3,9 +3,14 @@ package io.wcm.caravan.reha.spring.impl;
 import java.time.Duration;
 import java.util.function.Function;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -18,14 +23,16 @@ final class SpringReactorRehaImpl implements SpringReactorReha {
 
 	private final Reha reha;
 	private final ServletWebRequest webRequest;
+	private final Environment environment;
 
-	SpringReactorRehaImpl(Reha reha, ServletWebRequest webRequest) {
+	SpringReactorRehaImpl(Reha reha, ServletWebRequest webRequest, Environment environment) {
 		this.reha = reha;
 		this.webRequest = webRequest;
+		this.environment = environment;
 	}
 
 	@Override
-	public ServletWebRequest getWebRequest() {
+	public ServletWebRequest getRequest() {
 		return webRequest;
 	}
 
@@ -41,19 +48,49 @@ final class SpringReactorRehaImpl implements SpringReactorReha {
 
 	@Override
 	public <ControllerType> Link createLinkTo(Class<? extends ControllerType> controllerClass,
-			Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall) {
+			Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerDummyCall) {
 
-		ControllerType controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
+		String url = createControllerUrlWithLinkBuilder(controllerClass, controllerDummyCall);
 
-		Mono<ResponseEntity<JsonNode>> invocationResult = controllerCall.apply(controllerDummy);
-
-		String url = WebMvcLinkBuilder.linkTo(invocationResult).toString();
-
-		// FIXME: properly get the base path from the request
+		// if this is method isn't called from the thread that accepted the request,
+		// WebMvcLinkBuilder won't be able to construct anything but the path.
 		if (!url.startsWith("http")) {
-			url = "http://localhost:8080" + url;
+			// we'll use knowledge from the ServletWebRequest that we captured in the
+			// constructor to always have consistent absolute URLs
+			url = convertToExternalizedAbsoluteUrl(url);
 		}
 
 		return new Link(url);
+	}
+
+	private <ControllerType> String createControllerUrlWithLinkBuilder(Class<? extends ControllerType> controllerClass,
+			Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerDummyCall) {
+
+		ControllerType controllerDummy = WebMvcLinkBuilder.methodOn(controllerClass);
+
+		Mono<ResponseEntity<JsonNode>> invocationResult = controllerDummyCall.apply(controllerDummy);
+
+		return WebMvcLinkBuilder.linkTo(invocationResult).toString();
+	}
+
+	private String convertToExternalizedAbsoluteUrl(String relativeUrl) {
+
+		HttpServletRequest servletRequest = webRequest.getRequest();
+
+		UriComponentsBuilder builder = UriComponentsBuilder.newInstance();
+		builder.scheme(servletRequest.getScheme());
+		builder.host(webRequest.getRequest().getServerName());
+		builder.port(servletRequest.getLocalPort());
+		builder.path(StringUtils.substringBefore(relativeUrl, "?"));
+		builder.query(StringUtils.substringAfter(relativeUrl, "?"));
+
+		return builder.build().toString();
+	}
+
+	public String createLocalAbsoluteUrl(String pathAndQuery) {
+
+		int localPort = environment.getProperty("server.port", Integer.class, 8080);
+
+		return "http://localhost:" + localPort + pathAndQuery;
 	}
 }

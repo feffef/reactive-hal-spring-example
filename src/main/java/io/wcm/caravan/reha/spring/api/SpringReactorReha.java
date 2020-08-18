@@ -20,6 +20,6 @@ public interface SpringReactorReha {
 	<ControllerType> Link createLinkTo(Class<? extends ControllerType> controllerClass,
 			Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall);
 
-	ServletWebRequest getWebRequest();
+	ServletWebRequest getRequest();
 
 }

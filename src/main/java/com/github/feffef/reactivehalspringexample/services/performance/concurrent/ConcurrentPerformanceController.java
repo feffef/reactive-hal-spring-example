@@ -16,6 +16,7 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultPageResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 import com.github.feffef.reactivehalspringexample.common.context.AbstractExampleRequestContext;
+import com.github.feffef.reactivehalspringexample.common.services.LocalServiceRegistry;
 import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearchController;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -32,6 +33,9 @@ public class ConcurrentPerformanceController {
 
 	@Autowired
 	private SpringRehaAsyncRequestProcessor springReha;
+
+	@Autowired
+	private LocalServiceRegistry serviceRegistry;
 
 	@GetMapping()
 	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
@@ -62,8 +66,9 @@ public class ConcurrentPerformanceController {
 		@Override
 		public Observable<SearchResult> getSearchResults(String query, int delayMs) {
 
-			SearchEntryPointResource searchEntryPoint = getEntryPoint(
-					"http://localhost:8080" + MetaSearchController.BASE_PATH, SearchEntryPointResource.class);
+			String entryPointUri = serviceRegistry.getServiceUrl(MetaSearchController.BASE_PATH);
+
+			SearchEntryPointResource searchEntryPoint = getEntryPoint(entryPointUri, SearchEntryPointResource.class);
 
 			SearchOptions options = new SearchOptions();
 			options.delayMs = delayMs;

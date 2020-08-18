@@ -1,9 +1,13 @@
 package com.github.feffef.reactivehalspringexample.services.metasearch;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
 import com.github.feffef.reactivehalspringexample.api.search.SearchOptions;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.common.context.AbstractExampleRequestContext;
+import com.github.feffef.reactivehalspringexample.common.services.LocalServiceRegistry;
 import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchController;
 import com.github.feffef.reactivehalspringexample.services.examplesearch.second.SecondSearchController;
 import com.github.feffef.reactivehalspringexample.services.googlesearch.GoogleSearchController;
@@ -11,20 +15,20 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearch
 
 import io.reactivex.rxjava3.core.Flowable;
 
+@Component
 public class MetaSearchResultProvider {
 
-	private final RequestContext request;
+	@Autowired
+	private LocalServiceRegistry serviceRegistry;
 
 	private final MetaSearchResultMerger merger = new MetaSearchResultMerger();
 
-	public MetaSearchResultProvider(RequestContext context) {
-		this.request = context;
-	}
+	public Flowable<SearchResult> getMetaSearchResults(RequestContext request, String query, SearchOptions options) {
 
-	public Flowable<SearchResult> getMetaSearchResults(String query, SearchOptions options) {
+		SearchExecutor searchExecutor = new SearchExecutor(request, query, options);
 
-		Flowable<SearchResult> firstResults = getFirstResults(query, options);
-		Flowable<SearchResult> secondResults = getSecondResults(query, options);
+		Flowable<SearchResult> firstResults = searchExecutor.getFirstResults();
+		Flowable<SearchResult> secondResults = searchExecutor.getSecondResults();
 
 		Flowable<SearchResult> mergedResults;
 		if (options.skipSecond) {
@@ -38,44 +42,57 @@ public class MetaSearchResultProvider {
 		return mergedResults;
 	}
 
-	Flowable<SearchResult> getFirstResults(String query, SearchOptions metaOptions) {
+	private final class SearchExecutor {
 
-		SearchOptions exampleOptions = new SearchOptions();
-		exampleOptions.delayMs = metaOptions.delayMs;
+		private final RequestContext request;
+		private final String query;
+		private final SearchOptions metaOptions;
 
-		return executeSearchAndGetResultsAsFlowable(FirstSearchController.BASE_PATH, query, exampleOptions);
+		public SearchExecutor(RequestContext request, String query, SearchOptions metaOptions) {
+			this.request = request;
+			this.query = query;
+			this.metaOptions = metaOptions;
+		}
+
+		Flowable<SearchResult> getFirstResults() {
+
+			SearchOptions exampleOptions = new SearchOptions();
+			exampleOptions.delayMs = metaOptions.delayMs;
+
+			return executeSearchAndGetResultsAsFlowable(FirstSearchController.BASE_PATH, exampleOptions);
+		}
+
+		Flowable<SearchResult> getSecondResults() {
+
+			SearchOptions exampleOptions = new SearchOptions();
+			exampleOptions.delayMs = 500;
+
+			return executeSearchAndGetResultsAsFlowable(SecondSearchController.BASE_PATH, exampleOptions);
+		}
+
+		Flowable<SearchResult> getGoogleResults() {
+
+			SearchOptions googleOptions = new SearchOptions();
+
+			return executeSearchAndGetResultsAsFlowable(GoogleSearchController.BASE_PATH, googleOptions);
+		}
+
+		private Flowable<SearchResult> executeSearchAndGetResultsAsFlowable(String basePath, SearchOptions options) {
+
+			String entryPointUri = serviceRegistry.getServiceUrl(basePath);
+			String immutableEntryPointUri = appendQueryTimestampParam(entryPointUri);
+
+			SearchEntryPointResource searchEntryPoint = request.getEntryPoint(immutableEntryPointUri,
+					SearchEntryPointResource.class);
+
+			return searchEntryPoint.executeSearch(query, options).flatMapPublisher(merger::createAutoPagingFlowable);
+		}
+
+		private String appendQueryTimestampParam(String entryPointUri) {
+
+			return entryPointUri + "?" + AbstractExampleRequestContext.QUERY_TIMESTAMP_PARAM + "="
+					+ request.getQueryTimestamp().get();
+		}
 	}
 
-	Flowable<SearchResult> getSecondResults(String query, SearchOptions metaOptions) {
-
-		SearchOptions exampleOptions = new SearchOptions();
-		exampleOptions.delayMs = 500;
-
-		return executeSearchAndGetResultsAsFlowable(SecondSearchController.BASE_PATH, query, exampleOptions);
-	}
-
-	Flowable<SearchResult> getGoogleResults(String query, SearchOptions metaOptions) {
-
-		SearchOptions googleOptions = new SearchOptions();
-
-		return executeSearchAndGetResultsAsFlowable(GoogleSearchController.BASE_PATH, query, googleOptions);
-	}
-
-	private Flowable<SearchResult> executeSearchAndGetResultsAsFlowable(String basePath, String query,
-			SearchOptions options) {
-
-		String entryPointUri = "http://localhost:8080" + basePath;
-		String immutableEntryPointuri = appendQueryTimestampParam(entryPointUri);
-
-		SearchEntryPointResource searchEntryPoint = request.getEntryPoint(immutableEntryPointuri,
-				SearchEntryPointResource.class);
-
-		return searchEntryPoint.executeSearch(query, options).flatMapPublisher(merger::createAutoPagingFlowable);
-	}
-
-	private String appendQueryTimestampParam(String entryPointUri) {
-
-		return entryPointUri + "?" + AbstractExampleRequestContext.QUERY_TIMESTAMP_PARAM + "="
-				+ request.getQueryTimestamp().get();
-	}
 }
