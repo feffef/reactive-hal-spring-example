@@ -65,7 +65,7 @@ public class MetaSearchResultProvider {
 			SearchOptions options) {
 
 		String entryPointUri = "http://localhost:8080" + basePath;
-		String immutableEntryPointuri = appendMementoParam(entryPointUri);
+		String immutableEntryPointuri = appendQueryTimestampParam(entryPointUri);
 
 		SearchEntryPointResource searchEntryPoint = request.getEntryPoint(immutableEntryPointuri,
 				SearchEntryPointResource.class);
@@ -73,9 +73,9 @@ public class MetaSearchResultProvider {
 		return searchEntryPoint.executeSearch(query, options).flatMapPublisher(merger::createAutoPagingFlowable);
 	}
 
-	private String appendMementoParam(String entryPointUri) {
+	private String appendQueryTimestampParam(String entryPointUri) {
 
-		return entryPointUri + "?" + AbstractExampleRequestContext.MEMENTO_PARAM_NAME + "="
-				+ request.getMemento().get();
+		return entryPointUri + "?" + AbstractExampleRequestContext.QUERY_TIMESTAMP_PARAM + "="
+				+ request.getQueryTimestamp().get();
 	}
 }

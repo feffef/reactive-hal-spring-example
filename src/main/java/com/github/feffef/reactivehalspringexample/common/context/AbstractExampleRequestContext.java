@@ -16,26 +16,26 @@ import reactor.core.publisher.Mono;
 
 public abstract class AbstractExampleRequestContext<ControllerType> {
 
-	public static final String MEMENTO_PARAM_NAME = "memento";
+	public static final String QUERY_TIMESTAMP_PARAM = "queryTimestamp";
 
 	private final SpringReactorReha reha;
 
 	private final Class<? extends ControllerType> controllerClass;
 
-	private Optional<String> memento;
+	private Optional<String> queryTimeStamp;
 
 	public AbstractExampleRequestContext(SpringReactorReha reha, Class<? extends ControllerType> controllerClass) {
 		this.reha = reha;
 		this.controllerClass = controllerClass;
 
-		this.memento = getMementoFromRequestUrl();
+		this.queryTimeStamp = getQueryTimestampFromRequestUrl();
 
 		reha.setResponseMaxAge(getCacheDuration());
 	}
 
 	private Duration getCacheDuration() {
 
-		if (getMemento().isPresent()) {
+		if (getQueryTimestamp().isPresent()) {
 			return Duration.ofDays(365);
 		}
 
@@ -56,40 +56,42 @@ public abstract class AbstractExampleRequestContext<ControllerType> {
 
 		Link link = reha.createLinkTo(controllerClass, controllerCall);
 
-		forwardMementoIfPresentInRequestUrl(link);
+		forwardQueryTimestampIfPresentInRequestUrl(link);
 
 		return link;
 	}
 
-	protected void ensureThatMementoIsPresent() {
+	protected void ensureThatQueryTimestampIsPresent() {
 
-		if (!memento.isPresent()) {
-			memento = Optional.of(Long.toString(System.currentTimeMillis()));
+		if (!queryTimeStamp.isPresent()) {
+			long currentMillis = System.currentTimeMillis();
+			long roundedTimestamp = currentMillis - currentMillis % Duration.ofMinutes(10).toMillis();
+			queryTimeStamp = Optional.of(Long.toString(roundedTimestamp));
 		}
 	}
 
-	private Optional<String> getMementoFromRequestUrl() {
+	private Optional<String> getQueryTimestampFromRequestUrl() {
 
-		String memento = reha.getWebRequest().getParameter(MEMENTO_PARAM_NAME);
+		String timestamp = reha.getWebRequest().getParameter(QUERY_TIMESTAMP_PARAM);
 
-		if (StringUtils.isBlank(memento)) {
+		if (StringUtils.isBlank(timestamp)) {
 			return Optional.empty();
 		}
 
-		return Optional.of(memento);
+		return Optional.of(timestamp);
 	}
 
-	public Optional<String> getMemento() {
-		return memento;
+	public Optional<String> getQueryTimestamp() {
+		return queryTimeStamp;
 	}
 
-	private void forwardMementoIfPresentInRequestUrl(Link link) {
+	private void forwardQueryTimestampIfPresentInRequestUrl(Link link) {
 
 		String href = link.getHref();
-		if (memento.isPresent() && !href.contains(MEMENTO_PARAM_NAME + "=")) {
+		if (queryTimeStamp.isPresent() && !href.contains(QUERY_TIMESTAMP_PARAM + "=")) {
 
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(href);
-			builder.queryParam(MEMENTO_PARAM_NAME, memento.get());
+			builder.queryParam(QUERY_TIMESTAMP_PARAM, queryTimeStamp.get());
 			href = builder.build().toString();
 
 			link.setHref(href);

@@ -13,11 +13,11 @@ import io.wcm.caravan.reha.api.resources.LinkableResource;
 public class SearchEntryPointResourceImpl implements SearchEntryPointResource, LinkableResource {
 
 	private final SearchProviderRequestContext request;
-	private final String memento;
+	private final String queryTimestamp;
 
-	public SearchEntryPointResourceImpl(SearchProviderRequestContext request, String memento) {
+	public SearchEntryPointResourceImpl(SearchProviderRequestContext request, String queryTimestamp) {
 		this.request = request;
-		this.memento = memento;
+		this.queryTimestamp = queryTimestamp;
 	}
 
 	@Override
@@ -29,27 +29,30 @@ public class SearchEntryPointResourceImpl implements SearchEntryPointResource, L
 	}
 
 	@Override
-	public Maybe<SearchEntryPointResource> getImmutableEntryPoint(String memento) {
+	public Maybe<SearchEntryPointResource> getImmutableEntryPoint(String queryTimestamp) {
 
-		// don't render a link if the resource was already laoded with a memento
-		// parameter
-		if (request.getMemento().isPresent()) {
+		// don't render a link if the resource was already loaded with a timestamp param
+		if (request.getQueryTimestamp().isPresent()) {
 			return Maybe.empty();
 		}
 
-		// render a link template containing the memento variable (by leaving it to
-		// null)
+		// otherwise render a link template containing the timestamp variable
+		// (by leaving it to null)
 		return Maybe.just(new SearchEntryPointResourceImpl(request, null));
 	}
 
 	@Override
 	public Link createLink() {
 
-		Link link = request.createLinkTo(ctrl -> ctrl.getEntryPoint(memento));
-
-		link.setTitle("Entry point of the " + request.getSearchResultProvider().getName() + " service");
-
-		return link;
+		return request.createLinkTo(ctrl -> ctrl.getEntryPoint(queryTimestamp)).setTitle(getLinkTitle());
 	}
 
+	private String getLinkTitle() {
+
+		if (queryTimestamp == null) {
+			return "Load a version of this entry point that is immutable (due to fingerprinting in the URL)";
+		}
+
+		return "Entry point of the " + request.getSearchResultProvider().getName() + " service";
+	}
 }

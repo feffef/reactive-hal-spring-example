@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 public interface SearchProviderController {
 
-	Mono<ResponseEntity<JsonNode>> getEntryPoint(String memento);
+	Mono<ResponseEntity<JsonNode>> getEntryPoint(String queryTimestamp);
 
 	Mono<ResponseEntity<JsonNode>> getResultPage(String query, Integer delayMs, Integer startIndex);
 

@@ -70,7 +70,7 @@ public class MetaSearchController {
 		@Override
 		public Flowable<SearchResult> fetchAndMergeResults(String query, SearchOptions options) {
 
-			ensureThatMementoIsPresent();
+			ensureThatQueryTimestampIsPresent();
 
 			return provider.getMetaSearchResults(query, options);
 		}

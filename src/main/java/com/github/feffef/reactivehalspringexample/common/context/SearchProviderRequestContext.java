@@ -18,5 +18,5 @@ public interface SearchProviderRequestContext {
 
 	SearchResultProvider getSearchResultProvider();
 
-	Optional<String> getMemento();
+	Optional<String> getQueryTimestamp();
 }

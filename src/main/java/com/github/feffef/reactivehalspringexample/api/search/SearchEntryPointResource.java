@@ -16,5 +16,5 @@ public interface SearchEntryPointResource {
 			@TemplateVariables SearchOptions options);
 
 	@RelatedResource(relation = StandardRelations.MEMENTO)
-	Maybe<SearchEntryPointResource> getImmutableEntryPoint(@TemplateVariable("memento") String memento);
+	Maybe<SearchEntryPointResource> getImmutableEntryPoint(@TemplateVariable("queryTimestamp") String queryTimestamp);
 }

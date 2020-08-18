@@ -40,9 +40,9 @@ public class FirstSearchController implements SearchProviderController {
 
 	@Override
 	@GetMapping()
-	public Mono<ResponseEntity<JsonNode>> getEntryPoint(@RequestParam(required = false) String memento) {
+	public Mono<ResponseEntity<JsonNode>> getEntryPoint(@RequestParam(required = false) String queryTimestamp) {
 
-		return renderResource(request -> new SearchEntryPointResourceImpl(request, defaultIfNull(memento, "")));
+		return renderResource(request -> new SearchEntryPointResourceImpl(request, defaultIfNull(queryTimestamp, "")));
 	}
 
 	@Override

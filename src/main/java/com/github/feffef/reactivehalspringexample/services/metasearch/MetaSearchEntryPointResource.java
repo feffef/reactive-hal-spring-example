@@ -24,7 +24,7 @@ public class MetaSearchEntryPointResource implements SearchEntryPointResource, L
 	}
 
 	@Override
-	public Maybe<SearchEntryPointResource> getImmutableEntryPoint(String memento) {
+	public Maybe<SearchEntryPointResource> getImmutableEntryPoint(String queryTimestamp) {
 		// this is only required/supported for the individual search services
 		return Maybe.empty();
 	}
