@@ -1,7 +1,7 @@
 package com.github.feffef.reactivehalspringexample.api.search;
 
 import io.wcm.caravan.reha.api.annotations.HalApiInterface;
-import io.wcm.caravan.reha.api.annotations.RelatedResource;
+import io.wcm.caravan.reha.api.annotations.Related;
 import io.wcm.caravan.reha.api.annotations.ResourceState;
 import io.wcm.caravan.reha.api.relations.StandardRelations;
 
@@ -11,6 +11,6 @@ public interface SearchResultResource {
 	@ResourceState
 	SearchResult getProperties();
 
-	@RelatedResource(relation = StandardRelations.EXTERNAL)
+	@Related(StandardRelations.EXTERNAL)
 	ExternalHtmlResource getExternalLink();
 }

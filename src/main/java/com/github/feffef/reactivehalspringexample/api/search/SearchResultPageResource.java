@@ -3,19 +3,19 @@ package com.github.feffef.reactivehalspringexample.api.search;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.wcm.caravan.reha.api.annotations.HalApiInterface;
-import io.wcm.caravan.reha.api.annotations.RelatedResource;
+import io.wcm.caravan.reha.api.annotations.Related;
 import io.wcm.caravan.reha.api.relations.StandardRelations;
 
 @HalApiInterface
 public interface SearchResultPageResource {
 
-	@RelatedResource(relation = StandardRelations.ITEM)
+	@Related(StandardRelations.ITEM)
 	Observable<SearchResultResource> getResults();
 
-	@RelatedResource(relation = StandardRelations.NEXT)
+	@Related(StandardRelations.NEXT)
 	Maybe<SearchResultPageResource> getNextPage();
 
-	@RelatedResource(relation = StandardRelations.PREV)
+	@Related(StandardRelations.PREV)
 	Maybe<SearchResultPageResource> getPreviousPage();
 
 }
