@@ -1,9 +1,9 @@
 package com.github.feffef.reactivehalspringexample.api.performance;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.annotations.HalApiInterface;
-import io.wcm.caravan.reha.api.annotations.Related;
-import io.wcm.caravan.reha.api.annotations.TemplateVariable;
+import io.wcm.caravan.rhyme.api.annotations.HalApiInterface;
+import io.wcm.caravan.rhyme.api.annotations.Related;
+import io.wcm.caravan.rhyme.api.annotations.TemplateVariable;
 
 @HalApiInterface
 public interface PerformanceEntryPointResource {

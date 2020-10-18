@@ -1,4 +1,4 @@
-package io.wcm.caravan.reha.spring.impl;
+package io.wcm.caravan.rhyme.spring.impl;
 
 import java.net.URI;
 
@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.wcm.caravan.reha.api.common.HalResponse;
-import io.wcm.caravan.reha.api.exceptions.HalApiClientException;
-import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
+import io.wcm.caravan.rhyme.api.common.HalResponse;
+import io.wcm.caravan.rhyme.api.exceptions.HalApiClientException;
+import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;

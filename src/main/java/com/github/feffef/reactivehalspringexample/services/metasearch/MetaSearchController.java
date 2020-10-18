@@ -17,9 +17,9 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.common.context.AbstractExampleRequestContext;
 
 import io.reactivex.rxjava3.core.Flowable;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
-import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController

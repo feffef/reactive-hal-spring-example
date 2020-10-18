@@ -1,4 +1,4 @@
-package io.wcm.caravan.reha.spring.api;
+package io.wcm.caravan.rhyme.spring.api;
 
 import java.time.Duration;
 import java.util.function.Function;

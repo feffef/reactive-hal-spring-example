@@ -1,4 +1,4 @@
-package io.wcm.caravan.reha.spring.impl;
+package io.wcm.caravan.rhyme.spring.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

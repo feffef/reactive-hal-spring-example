@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.wcm.caravan.hal.resource.Link;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
 import reactor.core.publisher.Mono;
 
 public abstract class AbstractExampleRequestContext<ControllerType> {

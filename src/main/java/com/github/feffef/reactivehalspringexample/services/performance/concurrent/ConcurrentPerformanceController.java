@@ -20,9 +20,9 @@ import com.github.feffef.reactivehalspringexample.common.services.LocalServiceRe
 import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearchController;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
-import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController

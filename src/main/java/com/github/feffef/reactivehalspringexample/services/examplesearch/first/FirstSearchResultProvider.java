@@ -14,7 +14,7 @@ import com.github.feffef.reactivehalspringexample.common.services.SearchResultPr
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
+import io.wcm.caravan.rhyme.api.exceptions.HalApiDeveloperException;
 
 @Service
 public class FirstSearchResultProvider implements SearchResultProvider {

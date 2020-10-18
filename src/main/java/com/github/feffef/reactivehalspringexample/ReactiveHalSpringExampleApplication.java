@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "io.wcm.caravan.reha.spring", "com.github.feffef.reactivehalspringexample" })
+@ComponentScan(basePackages = { "io.wcm.caravan.rhyme.spring", "com.github.feffef.reactivehalspringexample" })
 public class ReactiveHalSpringExampleApplication {
 
 	public static void main(String[] args) {

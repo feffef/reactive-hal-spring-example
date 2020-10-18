@@ -20,9 +20,9 @@ import com.github.feffef.reactivehalspringexample.services.examplesearch.first.F
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.client.HalApiClient;
-import io.wcm.caravan.reha.api.common.RequestMetricsCollector;
-import io.wcm.caravan.reha.spring.api.MockMvcJsonResourceLoader;
+import io.wcm.caravan.rhyme.spring.api.MockMvcJsonResourceLoader;
+import io.wcm.caravan.rhyme.api.client.HalApiClient;
+import io.wcm.caravan.rhyme.api.common.RequestMetricsCollector;
 
 @SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
 @ActiveProfiles(ExampleSearchIntegrationTest.PROFILE)

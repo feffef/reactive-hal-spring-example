@@ -20,9 +20,9 @@ import com.github.feffef.reactivehalspringexample.services.performance.concurren
 import com.google.common.collect.ImmutableList;
 
 import io.wcm.caravan.hal.resource.Link;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
-import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController

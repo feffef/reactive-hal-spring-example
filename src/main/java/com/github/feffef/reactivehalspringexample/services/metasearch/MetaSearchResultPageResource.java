@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.wcm.caravan.hal.resource.Link;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
 
 public class MetaSearchResultPageResource implements SearchResultPageResource, LinkableResource {
 

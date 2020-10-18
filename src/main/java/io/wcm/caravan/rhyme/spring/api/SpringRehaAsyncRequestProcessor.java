@@ -1,4 +1,4 @@
-package io.wcm.caravan.reha.spring.api;
+package io.wcm.caravan.rhyme.spring.api;
 
 import java.util.function.Function;
 
@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.wcm.caravan.reha.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 
 public interface SpringRehaAsyncRequestProcessor {

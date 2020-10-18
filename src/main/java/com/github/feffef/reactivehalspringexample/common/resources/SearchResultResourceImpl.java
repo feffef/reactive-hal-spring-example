@@ -4,7 +4,7 @@ import com.github.feffef.reactivehalspringexample.api.search.ExternalHtmlResourc
 import com.github.feffef.reactivehalspringexample.api.search.SearchResult;
 import com.github.feffef.reactivehalspringexample.api.search.SearchResultResource;
 
-import io.wcm.caravan.reha.api.resources.EmbeddableResource;
+import io.wcm.caravan.rhyme.api.resources.EmbeddableResource;
 
 public class SearchResultResourceImpl implements SearchResultResource, EmbeddableResource {
 

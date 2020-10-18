@@ -20,9 +20,9 @@ import com.github.feffef.reactivehalspringexample.common.resources.SearchEntryPo
 import com.github.feffef.reactivehalspringexample.common.resources.SearchResultPageResourceImpl;
 import com.github.feffef.reactivehalspringexample.common.services.SearchResultProvider;
 
-import io.wcm.caravan.reha.api.resources.LinkableResource;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
-import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController

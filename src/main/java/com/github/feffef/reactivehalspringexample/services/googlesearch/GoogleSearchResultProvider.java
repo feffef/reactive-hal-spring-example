@@ -18,10 +18,10 @@ import com.github.feffef.reactivehalspringexample.common.services.SearchProvider
 import com.github.feffef.reactivehalspringexample.common.services.SearchResultProvider;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.reha.api.common.HalResponse;
-import io.wcm.caravan.reha.api.exceptions.HalApiDeveloperException;
-import io.wcm.caravan.reha.api.exceptions.HalApiServerException;
-import io.wcm.caravan.reha.spring.impl.WebClientJsonResourceLoader;
+import io.wcm.caravan.rhyme.api.common.HalResponse;
+import io.wcm.caravan.rhyme.api.exceptions.HalApiDeveloperException;
+import io.wcm.caravan.rhyme.api.exceptions.HalApiServerException;
+import io.wcm.caravan.rhyme.spring.impl.WebClientJsonResourceLoader;
 
 @Service
 public class GoogleSearchResultProvider implements SearchResultProvider {

@@ -1,4 +1,4 @@
-package io.wcm.caravan.reha.spring.impl;
+package io.wcm.caravan.rhyme.spring.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,13 +23,13 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.wcm.caravan.reha.api.Reha;
-import io.wcm.caravan.reha.api.RehaBuilder;
-import io.wcm.caravan.reha.api.common.HalResponse;
-import io.wcm.caravan.reha.api.resources.LinkableResource;
-import io.wcm.caravan.reha.api.spi.JsonResourceLoader;
-import io.wcm.caravan.reha.spring.api.SpringReactorReha;
-import io.wcm.caravan.reha.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.api.Reha;
+import io.wcm.caravan.rhyme.api.RehaBuilder;
+import io.wcm.caravan.rhyme.api.common.HalResponse;
+import io.wcm.caravan.rhyme.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @Component
