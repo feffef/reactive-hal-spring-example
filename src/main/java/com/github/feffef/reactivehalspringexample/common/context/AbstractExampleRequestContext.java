@@ -44,7 +44,7 @@ public abstract class AbstractExampleRequestContext<ControllerType> {
 
 	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
 
-		return reha.getEntryPoint(uri, halApiInterface);
+		return reha.getUpstreamEntryPoint(uri, halApiInterface);
 	}
 
 	public void setResponseMaxAge(Duration duration) {

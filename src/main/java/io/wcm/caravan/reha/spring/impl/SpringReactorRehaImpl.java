@@ -37,8 +37,8 @@ final class SpringReactorRehaImpl implements SpringReactorReha {
 	}
 
 	@Override
-	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
-		return reha.getEntryPoint(uri, halApiInterface);
+	public <T> T getUpstreamEntryPoint(String uri, Class<T> halApiInterface) {
+		return reha.getUpstreamEntryPoint(uri, halApiInterface);
 	}
 
 	@Override

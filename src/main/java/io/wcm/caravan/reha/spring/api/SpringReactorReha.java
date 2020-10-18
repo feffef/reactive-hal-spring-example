@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 public interface SpringReactorReha {
 
-	<T> T getEntryPoint(String uri, Class<T> halApiInterface);
+	<T> T getUpstreamEntryPoint(String uri, Class<T> halApiInterface);
 
 	void setResponseMaxAge(Duration duration);
 
