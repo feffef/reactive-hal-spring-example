@@ -21,8 +21,8 @@ import com.github.feffef.reactivehalspringexample.services.metasearch.MetaSearch
 
 import io.reactivex.rxjava3.core.Observable;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
-import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -32,7 +32,7 @@ public class ConcurrentPerformanceController {
 	public static final String BASE_PATH = "/performance/concurrent";
 
 	@Autowired
-	private SpringRehaAsyncRequestProcessor springReha;
+	private SpringRhymeAsyncRequestProcessor asyncProcessor;
 
 	@Autowired
 	private LocalServiceRegistry serviceRegistry;
@@ -53,14 +53,14 @@ public class ConcurrentPerformanceController {
 	Mono<ResponseEntity<JsonNode>> renderResource(
 			Function<ConcurrentPerformanceRequestContext, LinkableResource> resourceConstructor) {
 
-		return springReha.processRequest(RequestContext::new, resourceConstructor);
+		return asyncProcessor.processRequest(RequestContext::new, resourceConstructor);
 	}
 
 	class RequestContext extends AbstractExampleRequestContext<ConcurrentPerformanceController>
 			implements ConcurrentPerformanceRequestContext {
 
-		RequestContext(SpringReactorReha reha) {
-			super(reha, ConcurrentPerformanceController.class);
+		RequestContext(SpringReactorRhyme rhyme) {
+			super(rhyme, ConcurrentPerformanceController.class);
 		}
 
 		@Override

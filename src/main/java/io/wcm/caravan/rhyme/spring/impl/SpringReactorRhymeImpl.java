@@ -15,18 +15,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.wcm.caravan.hal.resource.Link;
-import io.wcm.caravan.rhyme.api.Reha;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.api.Rhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
 import reactor.core.publisher.Mono;
 
-final class SpringReactorRehaImpl implements SpringReactorReha {
+final class SpringReactorRhymeImpl implements SpringReactorRhyme {
 
-	private final Reha reha;
+	private final Rhyme rhyme;
 	private final ServletWebRequest webRequest;
 	private final Environment environment;
 
-	SpringReactorRehaImpl(Reha reha, ServletWebRequest webRequest, Environment environment) {
-		this.reha = reha;
+	SpringReactorRhymeImpl(Rhyme rhyme, ServletWebRequest webRequest, Environment environment) {
+		this.rhyme = rhyme;
 		this.webRequest = webRequest;
 		this.environment = environment;
 	}
@@ -38,12 +38,12 @@ final class SpringReactorRehaImpl implements SpringReactorReha {
 
 	@Override
 	public <T> T getUpstreamEntryPoint(String uri, Class<T> halApiInterface) {
-		return reha.getUpstreamEntryPoint(uri, halApiInterface);
+		return rhyme.getUpstreamEntryPoint(uri, halApiInterface);
 	}
 
 	@Override
 	public void setResponseMaxAge(Duration duration) {
-		reha.setResponseMaxAge(duration);
+		rhyme.setResponseMaxAge(duration);
 	}
 
 	@Override

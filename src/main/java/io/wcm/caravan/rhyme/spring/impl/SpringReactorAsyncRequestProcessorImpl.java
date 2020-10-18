@@ -23,18 +23,18 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import io.wcm.caravan.rhyme.api.Reha;
-import io.wcm.caravan.rhyme.api.RehaBuilder;
+import io.wcm.caravan.rhyme.api.Rhyme;
+import io.wcm.caravan.rhyme.api.RhymeBuilder;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
 import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
-import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @Component
 @RequestScope
-public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRequestProcessor {
+public class SpringReactorAsyncRequestProcessorImpl implements SpringRhymeAsyncRequestProcessor {
 
 	private static final Logger log = LoggerFactory.getLogger(SpringReactorAsyncRequestProcessorImpl.class);
 
@@ -59,18 +59,18 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 
 	@Override
 	public <RequestContextType> Mono<ResponseEntity<JsonNode>> processRequest(
-			Function<SpringReactorReha, RequestContextType> requestContextConstructor,
+			Function<SpringReactorRhyme, RequestContextType> requestContextConstructor,
 			Function<RequestContextType, LinkableResource> resourceImplConstructor) {
 
-		Reha reha = RehaBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
+		Rhyme rhyme = RhymeBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
 
-		SpringReactorReha springReha = new SpringReactorRehaImpl(reha, webRequest, environment);
+		SpringReactorRhyme springRhyme = new SpringReactorRhymeImpl(rhyme, webRequest, environment);
 
-		RequestContextType requestContext = requestContextConstructor.apply(springReha);
+		RequestContextType requestContext = requestContextConstructor.apply(springRhyme);
 
 		LinkableResource resourceImpl = resourceImplConstructor.apply(requestContext);
 
-		return renderResponse(reha, resourceImpl);
+		return renderResponse(rhyme, resourceImpl);
 	}
 
 	private static URI getRequestURI(HttpServletRequest httpRequest) {
@@ -87,9 +87,9 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRehaAsyncRe
 		}
 	}
 
-	private Mono<ResponseEntity<JsonNode>> renderResponse(Reha reha, LinkableResource resourceImpl) {
+	private Mono<ResponseEntity<JsonNode>> renderResponse(Rhyme rhyme, LinkableResource resourceImpl) {
 
-		CompletionStage<HalResponse> response = reha.renderResponseAsync(resourceImpl);
+		CompletionStage<HalResponse> response = rhyme.renderResponseAsync(resourceImpl);
 
 		CompletionStage<ResponseEntity<JsonNode>> entity = response.thenApply(this::toResponseEntity);
 

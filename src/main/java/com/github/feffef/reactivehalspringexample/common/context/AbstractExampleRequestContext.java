@@ -11,26 +11,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.wcm.caravan.hal.resource.Link;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
 import reactor.core.publisher.Mono;
 
 public abstract class AbstractExampleRequestContext<ControllerType> {
 
 	public static final String QUERY_TIMESTAMP_PARAM = "queryTimestamp";
 
-	private final SpringReactorReha reha;
+	private final SpringReactorRhyme rhyme;
 
 	private final Class<? extends ControllerType> controllerClass;
 
 	private Optional<String> queryTimeStamp;
 
-	public AbstractExampleRequestContext(SpringReactorReha reha, Class<? extends ControllerType> controllerClass) {
-		this.reha = reha;
+	public AbstractExampleRequestContext(SpringReactorRhyme rhyme, Class<? extends ControllerType> controllerClass) {
+		this.rhyme = rhyme;
 		this.controllerClass = controllerClass;
 
 		this.queryTimeStamp = getQueryTimestampFromRequestUrl();
 
-		reha.setResponseMaxAge(getCacheDuration());
+		rhyme.setResponseMaxAge(getCacheDuration());
 	}
 
 	private Duration getCacheDuration() {
@@ -44,17 +44,17 @@ public abstract class AbstractExampleRequestContext<ControllerType> {
 
 	public <T> T getEntryPoint(String uri, Class<T> halApiInterface) {
 
-		return reha.getUpstreamEntryPoint(uri, halApiInterface);
+		return rhyme.getUpstreamEntryPoint(uri, halApiInterface);
 	}
 
 	public void setResponseMaxAge(Duration duration) {
 
-		reha.setResponseMaxAge(duration);
+		rhyme.setResponseMaxAge(duration);
 	}
 
 	public Link createLinkTo(Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall) {
 
-		Link link = reha.createLinkTo(controllerClass, controllerCall);
+		Link link = rhyme.createLinkTo(controllerClass, controllerCall);
 
 		forwardQueryTimestampIfPresentInRequestUrl(link);
 
@@ -72,7 +72,7 @@ public abstract class AbstractExampleRequestContext<ControllerType> {
 
 	private Optional<String> getQueryTimestampFromRequestUrl() {
 
-		String timestamp = reha.getRequest().getParameter(QUERY_TIMESTAMP_PARAM);
+		String timestamp = rhyme.getRequest().getParameter(QUERY_TIMESTAMP_PARAM);
 
 		if (StringUtils.isBlank(timestamp)) {
 			return Optional.empty();

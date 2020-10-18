@@ -21,8 +21,8 @@ import com.google.common.collect.ImmutableList;
 
 import io.wcm.caravan.hal.resource.Link;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
-import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 public class GlobalEntryPointController {
 
 	@Autowired
-	private SpringRehaAsyncRequestProcessor requestProcessor;
+	private SpringRhymeAsyncRequestProcessor requestProcessor;
 
 	@GetMapping
 	public Mono<ResponseEntity<JsonNode>> getEntryPoint() {
@@ -40,10 +40,10 @@ public class GlobalEntryPointController {
 
 	class RequestContext {
 
-		private final SpringReactorReha reha;
+		private final SpringReactorRhyme rhyme;
 
-		public RequestContext(SpringReactorReha reha) {
-			this.reha = reha;
+		public RequestContext(SpringReactorRhyme rhyme) {
+			this.rhyme = rhyme;
 		}
 
 	}
@@ -87,7 +87,7 @@ public class GlobalEntryPointController {
 		@Override
 		public Link createLink() {
 
-			Link link = request.reha.createLinkTo(GlobalEntryPointController.class,
+			Link link = request.rhyme.createLinkTo(GlobalEntryPointController.class,
 					GlobalEntryPointController::getEntryPoint);
 
 			link.setTitle("The global entry point which links to all available services on this instance");
@@ -98,7 +98,7 @@ public class GlobalEntryPointController {
 		private <ControllerType> LinkableResource linkTo(Class<? extends ControllerType> controllerClass,
 				Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall, String title) {
 
-			Link link = request.reha.createLinkTo(controllerClass, controllerCall);
+			Link link = request.rhyme.createLinkTo(controllerClass, controllerCall);
 			return new LinkableResource() {
 
 				@Override

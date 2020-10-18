@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.wcm.caravan.hal.resource.Link;
 import reactor.core.publisher.Mono;
 
-public interface SpringReactorReha {
+public interface SpringReactorRhyme {
 
 	<T> T getUpstreamEntryPoint(String uri, Class<T> halApiInterface);
 

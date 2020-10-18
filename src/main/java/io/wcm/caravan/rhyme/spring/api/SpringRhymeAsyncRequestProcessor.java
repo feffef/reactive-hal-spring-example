@@ -9,10 +9,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
 import reactor.core.publisher.Mono;
 
-public interface SpringRehaAsyncRequestProcessor {
+public interface SpringRhymeAsyncRequestProcessor {
 
 	<RequestContextType> Mono<ResponseEntity<JsonNode>> processRequest(
-			Function<SpringReactorReha, RequestContextType> requestContextConstructor,
+			Function<SpringReactorRhyme, RequestContextType> requestContextConstructor,
 			Function<RequestContextType, LinkableResource> resourceImplConstructor);
 
 }

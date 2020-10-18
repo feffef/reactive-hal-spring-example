@@ -18,8 +18,8 @@ import com.github.feffef.reactivehalspringexample.common.context.AbstractExample
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
-import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -29,7 +29,7 @@ public class MetaSearchController {
 	public static final String BASE_PATH = "/search/meta";
 
 	@Autowired
-	private SpringRehaAsyncRequestProcessor requestProcessor;
+	private SpringRhymeAsyncRequestProcessor requestProcessor;
 
 	@Autowired
 	private MetaSearchResultProvider resultProvider;
@@ -62,8 +62,8 @@ public class MetaSearchController {
 	class RequestContext extends AbstractExampleRequestContext<MetaSearchController>
 			implements MetaSearchRequestContext {
 
-		RequestContext(SpringReactorReha reha) {
-			super(reha, MetaSearchController.class);
+		RequestContext(SpringReactorRhyme rhyme) {
+			super(rhyme, MetaSearchController.class);
 		}
 
 		@Override

@@ -21,8 +21,8 @@ import com.github.feffef.reactivehalspringexample.common.resources.SearchResultP
 import com.github.feffef.reactivehalspringexample.common.services.SearchResultProvider;
 
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
-import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -32,7 +32,7 @@ public class GoogleSearchController implements SearchProviderController {
 	public static final String BASE_PATH = "/search/google";
 
 	@Autowired
-	private SpringRehaAsyncRequestProcessor requestProcessor;
+	private SpringRhymeAsyncRequestProcessor requestProcessor;
 
 	@Autowired
 	private GoogleSearchResultProvider googleResultProvider;
@@ -64,8 +64,8 @@ public class GoogleSearchController implements SearchProviderController {
 	class RequestContext extends AbstractExampleRequestContext<SearchProviderController>
 			implements SearchProviderRequestContext {
 
-		RequestContext(SpringReactorReha reha) {
-			super(reha, GoogleSearchController.class);
+		RequestContext(SpringReactorRhyme rhyme) {
+			super(rhyme, GoogleSearchController.class);
 		}
 
 		@Override

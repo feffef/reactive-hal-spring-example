@@ -22,8 +22,8 @@ import com.github.feffef.reactivehalspringexample.common.resources.SearchResultP
 import com.github.feffef.reactivehalspringexample.common.services.SearchResultProvider;
 
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
-import io.wcm.caravan.rhyme.spring.api.SpringReactorReha;
-import io.wcm.caravan.rhyme.spring.api.SpringRehaAsyncRequestProcessor;
+import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
+import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -33,7 +33,7 @@ public class SecondSearchController implements SearchProviderController {
 	public static final String BASE_PATH = "/search/second";
 
 	@Autowired
-	private SpringRehaAsyncRequestProcessor requestProcessor;
+	private SpringRhymeAsyncRequestProcessor requestProcessor;
 
 	@Autowired
 	private SecondSearchResultProvider searchService;
@@ -65,8 +65,8 @@ public class SecondSearchController implements SearchProviderController {
 	class RequestContext extends AbstractExampleRequestContext<SearchProviderController>
 			implements SearchProviderRequestContext {
 
-		RequestContext(SpringReactorReha reha) {
-			super(reha, SecondSearchController.class);
+		RequestContext(SpringReactorRhyme rhyme) {
+			super(rhyme, SecondSearchController.class);
 		}
 
 		@Override
