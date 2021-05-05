@@ -21,7 +21,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.exceptions.HalApiDeveloperException;
 import io.wcm.caravan.rhyme.api.exceptions.HalApiServerException;
-import io.wcm.caravan.rhyme.spring.impl.WebClientJsonResourceLoader;
+import io.wcm.caravan.rhyme.spring.impl.WebClientResourceLoader;
 
 @Service
 public class GoogleSearchResultProvider implements SearchResultProvider {
@@ -41,7 +41,7 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 	}
 
 	@Autowired
-	private WebClientJsonResourceLoader resourceLoader;
+	private WebClientResourceLoader resourceLoader;
 
 	@Override
 	public Single<SearchProviderResult> getResults(String query, int startIndex, SearchOptions options) {
@@ -52,7 +52,7 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 
 		String requestUrl = buildGoogleCseRequestUri(query, startIndex);
 
-		return resourceLoader.loadJsonResource(requestUrl).map(this::toSearchProviderResult).onErrorResumeNext(
+		return resourceLoader.getHalResource(requestUrl).map(this::toSearchProviderResult).onErrorResumeNext(
 				ex -> Single.error(new HalApiServerException(503, "The Google Search API request failed", ex)));
 	}
 

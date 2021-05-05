@@ -6,19 +6,19 @@ import org.springframework.stereotype.Component;
 
 import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
-import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
+import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
 
 @Component
-public class CachingJsonResourceLoader implements JsonResourceLoader {
+public class CachingHalResourceLoader implements HalResourceLoader {
 
 	@Autowired
-	private WebClientJsonResourceLoader webClientLoader;
+	private WebClientResourceLoader webClientLoader;
 
 	@Override
-	@Cacheable("CachingJsonResourceLoader")
-	public Single<HalResponse> loadJsonResource(String uri) {
+	@Cacheable("CachingHalResourceLoader")
+	public Single<HalResponse> getHalResource(String uri) {
 
-		return webClientLoader.loadJsonResource(uri).cache();
+		return webClientLoader.getHalResource(uri).cache();
 	}
 
 }

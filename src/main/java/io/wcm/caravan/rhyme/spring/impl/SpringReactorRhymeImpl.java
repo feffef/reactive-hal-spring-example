@@ -37,8 +37,8 @@ final class SpringReactorRhymeImpl implements SpringReactorRhyme {
 	}
 
 	@Override
-	public <T> T getUpstreamEntryPoint(String uri, Class<T> halApiInterface) {
-		return rhyme.getUpstreamEntryPoint(uri, halApiInterface);
+	public <T> T getRemoteResource(String uri, Class<T> halApiInterface) {
+		return rhyme.getRemoteResource(uri, halApiInterface);
 	}
 
 	@Override

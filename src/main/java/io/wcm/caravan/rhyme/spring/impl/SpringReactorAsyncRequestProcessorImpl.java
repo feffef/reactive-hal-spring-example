@@ -23,11 +23,12 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.rhyme.api.Rhyme;
 import io.wcm.caravan.rhyme.api.RhymeBuilder;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
-import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
+import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
 import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
 import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
 import reactor.core.publisher.Mono;
@@ -43,18 +44,18 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRhymeAsyncR
 	private final URI requestUri;
 	private final ServletWebRequest webRequest;
 
-	private final JsonResourceLoader jsonLoader;
+	private final HalResourceLoader resourceLoader;
 
 	public SpringReactorAsyncRequestProcessorImpl(@Autowired Environment environment,
 			@Autowired HttpServletRequest httpRequest, @Autowired ServletWebRequest webRequest,
-			@Autowired @Qualifier("cachingJsonResourceLoader") JsonResourceLoader jsonLoader) {
+			@Autowired @Qualifier("cachingHalResourceLoader") HalResourceLoader resourceLoader) {
 
 		this.environment = environment;
 
 		this.requestUri = getRequestURI(httpRequest);
 		this.webRequest = webRequest;
 
-		this.jsonLoader = jsonLoader;
+		this.resourceLoader = resourceLoader;
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRhymeAsyncR
 			Function<SpringReactorRhyme, RequestContextType> requestContextConstructor,
 			Function<RequestContextType, LinkableResource> resourceImplConstructor) {
 
-		Rhyme rhyme = RhymeBuilder.withResourceLoader(jsonLoader).buildForRequestTo(requestUri.toString());
+		Rhyme rhyme = RhymeBuilder.withResourceLoader(resourceLoader).buildForRequestTo(requestUri.toString());
 
 		SpringReactorRhyme springRhyme = new SpringReactorRhymeImpl(rhyme, webRequest, environment);
 
@@ -89,11 +90,10 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRhymeAsyncR
 
 	private Mono<ResponseEntity<JsonNode>> renderResponse(Rhyme rhyme, LinkableResource resourceImpl) {
 
-		CompletionStage<HalResponse> response = rhyme.renderResponseAsync(resourceImpl);
-
-		CompletionStage<ResponseEntity<JsonNode>> entity = response.thenApply(this::toResponseEntity);
-
-		return Mono.fromCompletionStage(entity);
+		Single<HalResponse> response = rhyme.renderResponse(resourceImpl);
+		
+		return Mono.from(response.toFlowable())
+		    .map(this::toResponseEntity);
 	}
 
 	private ResponseEntity<JsonNode> toResponseEntity(HalResponse halResponse) {

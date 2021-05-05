@@ -19,21 +19,21 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.exceptions.HalApiClientException;
-import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
+import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
 @Component
-public class WebClientJsonResourceLoader implements JsonResourceLoader {
+public class WebClientResourceLoader implements HalResourceLoader {
 
-	private static final Logger log = LoggerFactory.getLogger(WebClientJsonResourceLoader.class);
+	private static final Logger log = LoggerFactory.getLogger(WebClientResourceLoader.class);
 
 	private final ConnectionProvider connectionProvider = ConnectionProvider
-			.builder(WebClientJsonResourceLoader.class.getSimpleName()).maxConnections(5000).build();
+			.builder(WebClientResourceLoader.class.getSimpleName()).maxConnections(5000).build();
 
 	@Override
-	public Single<HalResponse> loadJsonResource(String uri) {
+	public Single<HalResponse> getHalResource(String uri) {
 
 		if (log.isDebugEnabled()) {
 			log.debug("Fetching resource from " + uri);
@@ -46,7 +46,7 @@ public class WebClientJsonResourceLoader implements JsonResourceLoader {
 		ResponseSpec response = client.get().uri(URI.create(uri)).retrieve();
 
 		Mono<HalResponse> halResponse = response.toEntity(JsonNode.class).onErrorMap(ex -> remapException(ex, uri))
-				.map(WebClientJsonResourceLoader::toHalResponse);
+				.map(WebClientResourceLoader::toHalResponse);
 
 		return Single.fromCompletionStage(halResponse.toFuture()).observeOn(Schedulers.computation());
 	}

@@ -27,22 +27,22 @@ import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.hal.resource.HalResource;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.exceptions.HalApiClientException;
-import io.wcm.caravan.rhyme.api.spi.JsonResourceLoader;
+import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
 import io.wcm.caravan.rhyme.spring.impl.CacheControlUtil;
 
 @Component
-public class MockMvcJsonResourceLoader implements JsonResourceLoader {
+public class MockMvcResourceLoader implements HalResourceLoader {
 
 	private final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper());;
 
 	private final MockMvc mockMvc;
 
-	public MockMvcJsonResourceLoader(@Autowired WebApplicationContext wac) {
+	public MockMvcResourceLoader(@Autowired WebApplicationContext wac) {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 	}
 
 	@Override
-	public Single<HalResponse> loadJsonResource(String uri) {
+	public Single<HalResponse> getHalResource(String uri) {
 		try {
 			MockHttpServletResponse mvcResponse = getServletResponse(uri);
 

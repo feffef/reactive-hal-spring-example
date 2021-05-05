@@ -20,7 +20,7 @@ import com.github.feffef.reactivehalspringexample.services.examplesearch.first.F
 import com.google.common.base.Stopwatch;
 
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.rhyme.spring.api.MockMvcJsonResourceLoader;
+import io.wcm.caravan.rhyme.spring.api.MockMvcResourceLoader;
 import io.wcm.caravan.rhyme.api.client.HalApiClient;
 import io.wcm.caravan.rhyme.api.common.RequestMetricsCollector;
 
@@ -33,7 +33,7 @@ public class ExampleSearchIntegrationTest {
 	private static final String QUERY = "foo";
 
 	@Autowired
-	private MockMvcJsonResourceLoader resourceLoader;
+	private MockMvcResourceLoader resourceLoader;
 
 	@Autowired
 	MockFirstSearchResultProvider firstSearchResultProvider;
@@ -42,7 +42,7 @@ public class ExampleSearchIntegrationTest {
 
 		HalApiClient apiClient = HalApiClient.create(resourceLoader, RequestMetricsCollector.create());
 
-		return apiClient.getEntryPoint(FirstSearchController.BASE_PATH, SearchEntryPointResource.class);
+		return apiClient.getRemoteResource(FirstSearchController.BASE_PATH, SearchEntryPointResource.class);
 	}
 
 	private Single<SearchResultPageResource> getFirstPage() {

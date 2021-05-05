@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 public interface SpringReactorRhyme {
 
-	<T> T getUpstreamEntryPoint(String uri, Class<T> halApiInterface);
+	<T> T getRemoteResource(String uri, Class<T> halApiInterface);
 
 	void setResponseMaxAge(Duration duration);
 
