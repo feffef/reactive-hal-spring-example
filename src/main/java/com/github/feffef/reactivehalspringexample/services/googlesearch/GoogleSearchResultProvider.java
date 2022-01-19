@@ -21,7 +21,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.exceptions.HalApiDeveloperException;
 import io.wcm.caravan.rhyme.api.exceptions.HalApiServerException;
-import io.wcm.caravan.rhyme.spring.impl.WebClientResourceLoader;
+import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
 
 @Service
 public class GoogleSearchResultProvider implements SearchResultProvider {
@@ -41,7 +41,7 @@ public class GoogleSearchResultProvider implements SearchResultProvider {
 	}
 
 	@Autowired
-	private WebClientResourceLoader resourceLoader;
+	private HalResourceLoader resourceLoader;
 
 	@Override
 	public Single<SearchProviderResult> getResults(String query, int startIndex, SearchOptions options) {

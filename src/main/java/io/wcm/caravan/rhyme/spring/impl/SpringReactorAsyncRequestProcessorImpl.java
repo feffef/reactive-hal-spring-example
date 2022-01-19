@@ -28,6 +28,7 @@ import io.wcm.caravan.rhyme.api.Rhyme;
 import io.wcm.caravan.rhyme.api.RhymeBuilder;
 import io.wcm.caravan.rhyme.api.common.HalResponse;
 import io.wcm.caravan.rhyme.api.resources.LinkableResource;
+import io.wcm.caravan.rhyme.api.server.RhymeMetadataConfiguration;
 import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
 import io.wcm.caravan.rhyme.spring.api.SpringReactorRhyme;
 import io.wcm.caravan.rhyme.spring.api.SpringRhymeAsyncRequestProcessor;
@@ -48,7 +49,7 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRhymeAsyncR
 
 	public SpringReactorAsyncRequestProcessorImpl(@Autowired Environment environment,
 			@Autowired HttpServletRequest httpRequest, @Autowired ServletWebRequest webRequest,
-			@Autowired @Qualifier("cachingHalResourceLoader") HalResourceLoader resourceLoader) {
+			@Autowired HalResourceLoader resourceLoader) {
 
 		this.environment = environment;
 
@@ -63,7 +64,15 @@ public class SpringReactorAsyncRequestProcessorImpl implements SpringRhymeAsyncR
 			Function<SpringReactorRhyme, RequestContextType> requestContextConstructor,
 			Function<RequestContextType, LinkableResource> resourceImplConstructor) {
 
-		Rhyme rhyme = RhymeBuilder.withResourceLoader(resourceLoader).buildForRequestTo(requestUri.toString());
+		Rhyme rhyme = RhymeBuilder.withResourceLoader(resourceLoader)
+				.withMetadataConfiguration(new RhymeMetadataConfiguration() {
+
+					@Override
+					public boolean isMetadataGenerationEnabled() {
+						return true;
+					}
+				})
+				.buildForRequestTo(requestUri.toString());
 
 		SpringReactorRhyme springRhyme = new SpringReactorRhymeImpl(rhyme, webRequest, environment);
 

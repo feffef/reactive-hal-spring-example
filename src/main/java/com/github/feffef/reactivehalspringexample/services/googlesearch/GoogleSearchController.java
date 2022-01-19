@@ -46,8 +46,10 @@ public class GoogleSearchController implements SearchProviderController {
 
 	@Override
 	@GetMapping("/results")
-	public Mono<ResponseEntity<JsonNode>> getResultPage(@RequestParam("query") String query,
-			@RequestParam("delayMs") Integer delayMs, @RequestParam("startIndex") Integer startIndex) {
+	public Mono<ResponseEntity<JsonNode>> getResultPage(
+			@RequestParam("query") String query,
+			@RequestParam(name = "delayMs", required = false) Integer delayMs, 
+			@RequestParam("startIndex") Integer startIndex) {
 
 		SearchOptions options = new SearchOptions();
 		options.delayMs = delayMs;

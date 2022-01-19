@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.github.feffef.reactivehalspringexample.api.search.SearchEntryPointResource;
@@ -19,12 +22,15 @@ import com.github.feffef.reactivehalspringexample.api.search.SearchResultResourc
 import com.github.feffef.reactivehalspringexample.services.examplesearch.first.FirstSearchController;
 import com.google.common.base.Stopwatch;
 
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.annotations.Nullable;
 import io.reactivex.rxjava3.core.Single;
-import io.wcm.caravan.rhyme.spring.api.MockMvcResourceLoader;
 import io.wcm.caravan.rhyme.api.client.HalApiClient;
-import io.wcm.caravan.rhyme.api.common.RequestMetricsCollector;
+import io.wcm.caravan.rhyme.api.client.HalResourceLoaderBuilder;
+import io.wcm.caravan.rhyme.api.spi.HalResourceLoader;
+import io.wcm.caravan.rhyme.testing.spring.MockMvcHalResourceLoaderConfiguration;
 
-@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
+@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true", webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(ExampleSearchIntegrationTest.PROFILE)
 public class ExampleSearchIntegrationTest {
 
@@ -32,17 +38,27 @@ public class ExampleSearchIntegrationTest {
 
 	private static final String QUERY = "foo";
 
-	@Autowired
-	private MockMvcResourceLoader resourceLoader;
+	private final MockFirstSearchResultProvider firstSearchResultProvider;
 
-	@Autowired
-	MockFirstSearchResultProvider firstSearchResultProvider;
+	private final SearchEntryPointResource searchEntryPoint;
+
+	ExampleSearchIntegrationTest(@Autowired MockFirstSearchResultProvider firstSearchResultProvider,
+			@Autowired ServletWebServerApplicationContext server, @Autowired HalResourceLoaderBuilder builder) {
+
+		this.firstSearchResultProvider = firstSearchResultProvider;
+
+		HalResourceLoader nonCachingLoader = builder.build();
+
+		HalApiClient apiClient = HalApiClient.create(nonCachingLoader);
+
+		String entryPointUrl = "http://localhost:" + server.getWebServer().getPort() + FirstSearchController.BASE_PATH;
+
+		this.searchEntryPoint = apiClient.getRemoteResource(entryPointUrl, SearchEntryPointResource.class);
+	}
 
 	private SearchEntryPointResource getEntryPoint() {
 
-		HalApiClient apiClient = HalApiClient.create(resourceLoader, RequestMetricsCollector.create());
-
-		return apiClient.getRemoteResource(FirstSearchController.BASE_PATH, SearchEntryPointResource.class);
+		return searchEntryPoint;
 	}
 
 	private Single<SearchResultPageResource> getFirstPage() {
@@ -79,7 +95,9 @@ public class ExampleSearchIntegrationTest {
 
 		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE + 10);
 
-		getFirstPage().flatMapMaybe(SearchResultPageResource::getPreviousPage).test().assertComplete().assertNoValues();
+		SearchResultPageResource prevPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getPreviousPage).blockingGet();
+		
+		assertThat(prevPage).isNull();
 	}
 
 	@Test
@@ -87,7 +105,9 @@ public class ExampleSearchIntegrationTest {
 
 		firstSearchResultProvider.setNumResultsForQuery(QUERY, MAX_RESULTS_PER_PAGE - 10);
 
-		getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage).test().assertComplete().assertNoValues();
+		SearchResultPageResource nextPage = getFirstPage().flatMapMaybe(SearchResultPageResource::getNextPage).blockingGet();
+		
+		assertThat(nextPage).isNull();
 	}
 
 	@Test

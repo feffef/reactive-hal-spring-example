@@ -57,7 +57,7 @@ public class GlobalEntryPointController {
 		}
 
 		@Override
-		public List<LinkableResource> getSearchServiceEntryPoints() {
+		public List<Link> getSearchServiceEntryPoints() {
 
 			return ImmutableList.of(
 					linkTo(FirstSearchController.class, ctrl -> ctrl.getEntryPoint(""),
@@ -69,14 +69,14 @@ public class GlobalEntryPointController {
 		}
 
 		@Override
-		public LinkableResource getMetaSeachEntryPoint() {
+		public Link getMetaSeachEntryPoint() {
 
 			return linkTo(MetaSearchController.class, MetaSearchController::getEntryPoint,
 					"A meta search service that executes parallel requests to the individual search services, and merges the results");
 		}
 
 		@Override
-		public List<LinkableResource> getPerformanceTestsEntryPoints() {
+		public List<Link> getPerformanceTestsEntryPoints() {
 
 			return ImmutableList
 					.of(linkTo(ConcurrentPerformanceController.class, ConcurrentPerformanceController::getEntryPoint,
@@ -95,20 +95,10 @@ public class GlobalEntryPointController {
 			return link;
 		}
 
-		private <ControllerType> LinkableResource linkTo(Class<? extends ControllerType> controllerClass,
+		private <ControllerType> Link linkTo(Class<? extends ControllerType> controllerClass,
 				Function<ControllerType, Mono<ResponseEntity<JsonNode>>> controllerCall, String title) {
 
-			Link link = request.rhyme.createLinkTo(controllerClass, controllerCall);
-			return new LinkableResource() {
-
-				@Override
-				public Link createLink() {
-
-					String path = URI.create(link.getHref()).getPath();
-
-					return link.setName(path).setTitle(title);
-				}
-			};
+			return request.rhyme.createLinkTo(controllerClass, controllerCall);
 		}
 	}
 }
