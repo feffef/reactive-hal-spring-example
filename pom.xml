@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.0.RELEASE</version>
+		<version>2.5.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>feffef</groupId>
@@ -30,11 +30,12 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-rest-hal-browser</artifactId>
+			<version>3.3.9.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>io.wcm.caravan</groupId>
-			<artifactId>io.wcm.caravan.rhyme.core</artifactId>
-			<version>1.1.0-SNAPSHOT</version>
+			<artifactId>io.wcm.caravan.rhyme.spring</artifactId>
+			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -56,6 +57,12 @@
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.wcm.caravan</groupId>
+			<artifactId>io.wcm.caravan.rhyme.testing</artifactId>
+			<version>1.0.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
